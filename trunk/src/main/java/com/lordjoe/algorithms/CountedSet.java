@@ -1,8 +1,10 @@
 package com.lordjoe.algorithms;
 
-import com.sun.istack.internal.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * com.lordjoe.algorithms.CountedSet
@@ -19,7 +21,7 @@ public class CountedSet<T> {
     }
 
 
-    public void add(@NotNull T added) {
+    public void add(T added) {
         int count = getCount(added);
         m_Counts.put(added, count + 1);
     }
@@ -29,7 +31,7 @@ public class CountedSet<T> {
      * @param key
      * @return  count or 0 of nit fount
      */
-    public int getCount(@NotNull T key) {
+    public int getCount(T key) {
         if (m_Counts.containsKey(key))
             return m_Counts.get(key);
         else
@@ -42,7 +44,7 @@ public class CountedSet<T> {
      * @param minCount
      * @return
      */
-    public @NotNull  List<T> getItemsWithCount(int minCount) {
+    public  List<T> getItemsWithCount(int minCount) {
         List ret = new ArrayList() ;
         for (T t : m_Counts.keySet()) {
              int test = m_Counts.get(t);
