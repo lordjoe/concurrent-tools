@@ -37,7 +37,7 @@ public class HDFSFileSystemTests {
     public void versionTest() {
         // better be running version 0.2 of Hadoop
         HadoopMajorVersion mv = HadoopMajorVersion.CURRENT_VERSION;
-        Assert.assertEquals(HadoopMajorVersion.Version0, mv);
+        Assert.assertEquals(HadoopMajorVersion.Version2, mv);
     }
 
     public static boolean isHDFSAccessible() {

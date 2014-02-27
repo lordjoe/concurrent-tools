@@ -9,6 +9,35 @@ import java.io.*;
  */
 public class ExceptionUtilities {
 
+    /**
+     * create a RuntimeException to throw
+     * @param ex
+     * @return
+     */
+    public static RuntimeException buildException(Exception ex)  {
+       if (ex instanceof RuntimeException) {
+            return (RuntimeException) ex;
+         }
+        return new RuntimeException(getUltimateCause(ex));
+    }
+    /**
+     * unwind cause to find what really caused an exception
+     * @param in
+     * @return
+     */
+    public static  Throwable getUltimateCause(Throwable in)
+    {
+        final Throwable cause = in.getCause();
+        if(cause == null || in == cause)
+            return in;
+        return getUltimateCause(cause);
+    }
+
+    public static void printUltimateCause(Throwable ex)
+    {
+        getUltimateCause(ex).printStackTrace();
+    }
+
     public static void printAllStacks(Throwable t) {
         printAllStacks(t, System.out);
     }
