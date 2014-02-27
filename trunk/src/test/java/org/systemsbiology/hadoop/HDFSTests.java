@@ -35,15 +35,28 @@ public class HDFSTests {
                     "He followed her to schoool one day";
 
 
+    public static final String VERSION2_HOST = "hadoop-master-01.ebi.ac.uk";
+
+    public static final int VERSION2_PORT = 8020;
+
+    @Before
+    public void setVersion2()
+    {
+        RemoteUtilities.setHost(VERSION2_HOST);
+        RemoteUtilities.setPort(VERSION2_PORT);
+
+    }
+
     @Test
     public void versionTest() {
         HadoopMajorVersion mv = HadoopMajorVersion.CURRENT_VERSION;
-        Assert.assertEquals(HadoopMajorVersion.Version0, mv);
+        Assert.assertEquals(HadoopMajorVersion.Version2, mv);
     }
 
     public static boolean isHDFSAccessible() {
         //noinspection UnnecessaryLocalVariable,UnusedDeclaration,UnusedAssignment
         IHDFSFileSystem access = null;
+
         final String host = RemoteUtilities.getHost();
         final int port = RemoteUtilities.getPort();
         final String user = RemoteUtilities.getUser();

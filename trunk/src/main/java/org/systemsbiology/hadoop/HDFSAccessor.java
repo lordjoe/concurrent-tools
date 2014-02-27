@@ -74,6 +74,7 @@ public class HDFSAccessor implements IHDFSFileSystem {
                 IHDFSFileSystem ret = constructor.newInstance(host, new Integer(port));
                 return ret;
             } catch (Exception e) {
+                ExceptionUtilities.printUltimateCause(e);
                 throw new RuntimeException(e);
             }
         } else {
