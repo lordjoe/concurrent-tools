@@ -160,13 +160,6 @@ public class CapitalWordCount  extends Configured implements Tool {
             System.err.println(arg);
         }
            String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-//        if (otherArgs.length != 2) {
-//            System.err.println("Usage: wordcount <in> <out>");
-//            System.exit(2);
-//        }
-
-        String isBar = conf.get(TEST_PROPERTY);
-        System.err.println("Bar is " + isBar);
 
 
         Job job = new Job(conf, "word count");
@@ -207,8 +200,6 @@ public class CapitalWordCount  extends Configured implements Tool {
         expunge(outputDir,fileSystem);    // make sure thia does not exist
         FileOutputFormat.setOutputPath(job, outputDir);
 
-        isBar = conf.get(TEST_PROPERTY);
-        System.err.println("Bar is " + isBar);
 
         boolean ans = job.waitForCompletion(true);
         //noinspection UnnecessaryLocalVariable,UnusedDeclaration,UnusedAssignment

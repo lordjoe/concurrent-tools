@@ -613,7 +613,6 @@ public class HDFWithNameAccessor extends HDFSAccessor {
         }
         Path src = new Path(hdfsPath);
 
-
         guaranteeDirectory(src);
 
     }
