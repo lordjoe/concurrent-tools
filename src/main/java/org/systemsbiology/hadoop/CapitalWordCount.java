@@ -166,7 +166,7 @@ public class CapitalWordCount  extends Configured implements Tool {
         conf = job.getConfiguration(); // NOTE JOB Copies the configuraton
         job.setJarByClass(CapitalWordCount.class);
         job.setMapperClass(TokenizerMapper.class);
-         job.setCombinerClass(IntSumReducer.class);
+        job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);
         
         job.setMapOutputKeyClass(Text.class);
@@ -175,8 +175,8 @@ public class CapitalWordCount  extends Configured implements Tool {
         job.setOutputValueClass(IntWritable.class);
 
 
-        job.setInputFormatClass(FakeWordInputFormat.class);
-        
+        job.setInputFormatClass(TextInputFormat.class);
+
         // added Slewis
         job.setNumReduceTasks(2); // cheaper on amazon HadoopUtilities.DEFAULT_REDUCE_TASKS);
     //    job.setPartitionerClass(MyPartitioner.class);
