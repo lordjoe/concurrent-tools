@@ -97,7 +97,7 @@ public abstract class AbstractParameterizedReducer extends Reducer<Text, Text, T
 
 
 //        // sometimes we need to add a prefix to a file
-//        String forcePathPrefix = conf.get(XTandemHadoopUtilities.FORCE_PATH_PREFIX_KEY);
+//        String forcePathPrefix = conf.get(HadoopUtilities.FORCE_PATH_PREFIX_KEY);
 //        XTandemMain.setRequiredPathPrefix(forcePathPrefix);
 //        // m_Factory.setValidationStringency(SAMFileReader.ValidationStringency.LENIENT)
 

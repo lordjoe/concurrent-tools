@@ -59,9 +59,9 @@ public class AbstractParameterizedMapper<T> extends Mapper<T, Text, Text, Text> 
         }
 
 
-//        String defaultPath = conf.get(XTandemHadoopUtilities.PATH_KEY);
-//        XTandemHadoopUtilities.setDefaultPath(defaultPath);
-//        String forcePathPrefix = conf.get(XTandemHadoopUtilities.FORCE_PATH_PREFIX_KEY);
+//        String defaultPath = conf.get(HadoopUtilities.PATH_KEY);
+//        HadoopUtilities.setDefaultPath(defaultPath);
+//        String forcePathPrefix = conf.get(HadoopUtilities.FORCE_PATH_PREFIX_KEY);
 //        XTandemMain.setRequiredPathPrefix(forcePathPrefix);
 
 
@@ -131,7 +131,7 @@ public class AbstractParameterizedMapper<T> extends Mapper<T, Text, Text, Text> 
         super.cleanup(context);
     }
 
-    protected void writeKeyValue(String key, String value, Context context) {
+    protected void writeKeyValue(String key, String value, TaskInputOutputContext context) {
         Text onlyKey = getOnlyKey();
         onlyKey.set(key);
         Text onlyValue = getOnlyValue();
