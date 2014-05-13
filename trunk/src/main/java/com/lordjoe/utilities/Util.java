@@ -27,6 +27,7 @@ import java.net.*;
 import java.text.*;
 import java.util.*;
 import java.util.List;
+import java.util.zip.*;
 
 /**
  * { class
@@ -7136,6 +7137,39 @@ public abstract class Util {
         }
         return ret;
     }
+
+
+    public static InputStream getResourceStream(  String resourceStr) {
+         return getResourceStream(Util.class,resourceStr);
+    }
+
+    public static InputStream getResourceStream(Class theClass, String resourceStr) {
+        String resource = resourceStr.replace("res://", "");
+        final InputStream stream = theClass.getResourceAsStream(resource);
+
+        if (stream == null)
+            throw new IllegalArgumentException("Cannot open resource " + resourceStr);
+        return stream;
+    }
+
+
+    public static InputStream getDescribedStream(String name) {
+        if (name.startsWith("res://"))
+            return getResourceStream(name);
+        try {
+            File test = new File(name);
+            if (!test.exists())
+                return null;
+            if (name.endsWith(".gz"))
+                return new GZIPInputStream(new FileInputStream(name));
+            return new FileInputStream(name);
+        }
+        catch (IOException e) {
+
+            throw new RuntimeException("the file " + name + " was not found", e);
+        }
+    }
+
 
 
 }

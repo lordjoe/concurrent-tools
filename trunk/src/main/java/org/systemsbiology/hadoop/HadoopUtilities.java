@@ -14,6 +14,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskID;
 
+import javax.annotation.*;
 import java.io.*;
 import java.util.*;
 
@@ -23,12 +24,11 @@ import java.util.*;
  * on May 4, 2010
  */
 public class HadoopUtilities {
-    public static final HadoopUtilities[] EMPTY_ARRAY = {};
     public static final Class THIS_CLASS = HadoopUtilities.class;
-    
+
     public static final int DEFAULT_MAX_SPLIT_SIZE = 64 * 1024 * 1024;
     private static int gMaxSplitSize = DEFAULT_MAX_SPLIT_SIZE;
- 
+
 
     public static final String GROUP_NAME = "Genome";
 
@@ -60,7 +60,7 @@ public class HadoopUtilities {
     public static final String REMOTEDIRECTORY_PROPERTY = "remoteBaseDirectory";
     public static final String COMPRESS_INTERMEDIATE_FILES_PROPERTY = "compressIntermediateFiles";
     public static final String MAX_SPLIT_SIZE_PROPERTY = "maxSplitSize";
-     public static final String DELETE_OUTPUT_DIRECTORIES_PROPERTY = "deleteOutputDirectories";
+    public static final String DELETE_OUTPUT_DIRECTORIES_PROPERTY = "deleteOutputDirectories";
     public static final String MAX_CLUSTER_MEMORY_PROPERTY = "maxClusterMemory";
     public static final String CLUSTER_SIZE_PROPERTY = "clusterSize";
     public static final String HADOOP02_HOST = "hadoop02Host";
@@ -72,8 +72,61 @@ public class HadoopUtilities {
     public static final String JOB_SIZE_PROPERTY = "job_size";
     public static final String MAX_REDUCE_TASKS_PROPERTY = "maxReduceTasks";
 
+
+    public static final String WRITING_PEPXML_PROPERTY = "org.systemsbiology.xtandem.hadoop.WritePepXML";
+    public static final String WRITING_MGF_PROPERTY = "org.systemsbiology.xtandem.hadoop.WriteMGFSpectraWithHyperscoreGreaterThan";
+    public static final String WRITING_MGF_PROPERTY_2 = "org.systemsbiology.xtandem.hadoop.WriteMGFSpectraWithExpectValueLowerThan";
+    public static final String CREATE_DECOY_PEPTIDES_PROPERTY = "org.systemsbiology.xtandem.CreateDecoyPeptides";
+
+
+    public static final String[] HADOOP_INTERNAL_COUNTERS = {
+            "Spilled Records",
+            "FILE_BYTES_READ",
+            "Combine output records",
+            "Combine input records",
+            "Map output bytes",
+            "Map input records",
+            "Reduce output records",
+            "Reduce shuffle bytes",
+            "FILE_BYTES_WRITTEN",
+            "Reduce input groups",
+            "Map output records",
+            "Reduce output records",
+    };
+    // the protein is a decoy if a label starts with one of these
+    public static final String[] DECOY_PREFIX = {
+            //           "DECOY_",
+            "###REV###",
+            "###RND###",
+            "RND_",
+            "REV_",
+            "REV1_",
+
+
+    };
+
+    public static final String DEFAULT_DECOY_PREFIX = "DECOY_";
+
+    public static final Set<String> HADOOP_INTERNAL_COUNTER_SET = new HashSet<String>(Arrays.asList(HADOOP_INTERNAL_COUNTERS));
+
+    public static boolean isCounterHadoopInternal(String name) {
+        return HADOOP_INTERNAL_COUNTER_SET.contains(name);
+    }
+
+
+    private static final List<IStreamOpener> gPreLoadOpeners =
+            new ArrayList<IStreamOpener>();
+
+    public static void addPreLoadOpener(IStreamOpener opener) {
+        gPreLoadOpeners.add(opener);
+    }
+
+    public static IStreamOpener[] getPreloadOpeners() {
+        return gPreLoadOpeners.toArray(new IStreamOpener[gPreLoadOpeners.size()]);
+    }
+
     // Hard code this so we can debug partitioner code
-     public static final int DEFAULT_TEST_NUMBER_REDUCERS = 64;
+    public static final int DEFAULT_TEST_NUMBER_REDUCERS = 64;
 
     public static final int DEFAULT_REDUCE_TASKS = 14;
     // in development to speed up
@@ -155,8 +208,7 @@ public class HadoopUtilities {
             File[] ret = new File[holder.size()];
             holder.toArray(ret);
             return ret;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
 
         }
@@ -185,85 +237,36 @@ public class HadoopUtilities {
 
     /**
      * return the current cluster size which should be set somewhere
-     * @return  as above
+     *
+     * @return as above
      */
-    public static int getClusterSize()
-    {
+    public static int getClusterSize() {
         String property = getProperty(CLUSTER_SIZE_PROPERTY);
-        if(property != null)
+        if (property != null)
             return Integer.parseInt(property);
         else
             return DEFAULT_CLUSTER_SIZE;
     }
 
-    public static void setClusterSize(int size)  {
-        setProperty(CLUSTER_SIZE_PROPERTY,Integer.toString(size));
+    public static void setClusterSize(int size) {
+        setProperty(CLUSTER_SIZE_PROPERTY, Integer.toString(size));
     }
 
     public static final JobSizeEnum DEFAULT_JOB_SIZE = JobSizeEnum.Enormous;
+
     /**
-      * return the jobsize estimate - otherwise return JobSizeEnum.Medium
-      * @return  as above
-      */
-    public static JobSizeEnum getJobSize()
-    {
+     * return the jobsize estimate - otherwise return JobSizeEnum.Medium
+     *
+     * @return as above
+     */
+    public static JobSizeEnum getJobSize() {
         String property = getProperty(JOB_SIZE_PROPERTY);
-        if(property != null)
+        if (property != null)
             return JobSizeEnum.valueOf(property);
         else
             return DEFAULT_JOB_SIZE;
 
     }
-//
-//    public static String[] readConfigFileFS(String pArg) {
-//        //   if (pArg.startsWith("s3n://"))
-//        //       return AWSUtilities.readConfigFileS3(pArg);
-//
-//        File configuration = new File(pArg);
-//        String[] pLines = null;
-//        boolean exists = configuration.exists();
-//        System.err.println("File " + pArg + " exists " + exists);
-//        boolean isFile = configuration.isFile();
-//        System.err.println("File " + pArg + " isFile " + isFile);
-//        if (exists && isFile) {
-//            List<String> holder = null;
-//            String line = null;
-//            try {
-//                System.err.println("File " + pArg + " ready to open");
-//                LineNumberReader nr = new LineNumberReader(new FileReader(pArg));
-//                System.err.println("File " + pArg + "   open");
-//                holder = new ArrayList<String>();
-//                line = nr.readLine();
-//                while (line != null) {
-//                    System.err.println(line);
-//                    holder.add(line);
-//                    line = nr.readLine();
-//                }
-//            }
-//            catch (IOException e) {
-//                e.printStackTrace(System.err);
-//                throw new RuntimeException(e);
-//
-//            }
-//            String[] ret = new String[holder.size()];
-//            pLines = holder.toArray(ret);
-//            for (int i = 0; i < pLines.length; i++) {
-//                line = pLines[i];
-//                //   System.err.println("line " + i + " " + line);
-//                // tell the system about the chromosome set
-//                if (line.startsWith("Organism")) {
-//                    String[] items = line.split(" ");
-//                    if (items.length > 1) {
-//                        String org = items[1];
-//                        DefaultChromosome.setDefaultChromosomeSet(org);
-//                    }
-//                }
-//            }
-//
-//        }
-//        return pLines;
-//    }
-//
 
     public static void setCounterValue(Enum val, long newValue, Job job) {
         try {
@@ -271,12 +274,7 @@ public class HadoopUtilities {
             Counter counter = counters.findCounter(val);
             long value = counter.getValue();
             counter.increment(newValue - value);
-        }
-//        catch (InterruptedException e) {
-//              throw new RuntimeException(e);
-//
-//          }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
 
         }
@@ -299,7 +297,7 @@ public class HadoopUtilities {
     public static boolean isWindows() {
         String os = System.getProperty("os.name").toLowerCase();
         return os.contains("windows");
-     }
+    }
 
     public static void writeResourceAsFile(Class cls, String resourceName, LocalFileSystem localFs, String dstFile) {
         InputStream inp = cls.getResourceAsStream(resourceName);
@@ -311,8 +309,7 @@ public class HadoopUtilities {
         try {
             FSDataOutputStream outStream = localFs.create(path);
             copyFile(pInp, outStream);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
 
         }
@@ -329,7 +326,7 @@ public class HadoopUtilities {
      * @param dst destination file name
      * @param src source file name
      * @return true for success
-     *         }
+     * }
      * @name copyFile
      * @function copy file named src into new file named dst
      */
@@ -344,11 +341,9 @@ public class HadoopUtilities {
                 outStream.write(buffer, 0, bytesRead);
             }
             return true;
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             return (false);
-        }
-        finally {
+        } finally {
             FileUtilities.guaranteeClosed(inp);
             FileUtilities.guaranteeClosed(outStream);
         }
@@ -366,80 +361,9 @@ public class HadoopUtilities {
         }
     }
 
-//    public void writeToFileSystem()
-//    {
-//        Configuration conf = new Configuration();
-//        FileSystem fs = FileSystem.get(conf);
-//        Path p = new Path("/my/path/foo");
-//        FSDataOutputStream out = fs.create(path, false);
-//// write some raw bytes
-//        out.write(getBytes());
-//// write an int
-//        out.writeInt(getInt());
-//        ...
-//        out.close();
-//    }
-//
-//    /**
-//     * fill in the Sequence data when it is not available
-//     *
-//     * @param header
-//     */
-//    public static void addDefaultHeaderSequence( SAMFileHeader header) {
-//        IChromosome[] chromosomes = DefaultChromosome.getDefaultChromosomeSet();
-//        for (int i = 0; i < chromosomes.length; i++) {
-//            IChromosome chr = chromosomes[i];
-//            SAMSequenceRecord rec = new SAMSequenceRecord(chr.toString(), chr.getLength());
-//            rec.setAssembly(DefaultChromosome.getDefaultChromosomeSetName());
-//            header.addSequence(rec);
-//        }
-//    }
-//
-//    public static void readConfigFile(Configuration pConf, String pConfigFile) {
-//        File configuration = new File(pConfigFile);
-//        if (configuration.exists() && configuration.isFile()) {
-//            String[] lines = FileUtilities.readInAllLines(configuration);
-//            for (int i = 0; i < lines.length; i++) {
-//                String line = lines[i];
-//                // tell the system about the chromosome set
-//                if (line.startsWith("Organism")) {
-//                    String[] items = line.split(" ");
-//                    if (items.length > 1)
-//                        DefaultChromosome.setDefaultChromosomeSet(items[1]);
-//                }
-//            }
-//            pConf.setStrings(HadoopUtilities.CONFIGURATION_KEY, lines);
-//
-//        }
-//    }
 
     public static final Text ONLY_KEY = new Text(); // avoid garbage collection
 
-
-//
-//    public static SAMFileReader.ValidationStringency getValidationStringency() {
-//        return gValidationStringency;
-//    }
-//
-//    public static void setValidationStringency(
-//            SAMFileReader.ValidationStringency pValidationStringency) {
-//        gValidationStringency = pValidationStringency;
-//    }
-//
-//    /**
-//     * read a SAM Header from a Text String
-//     *
-//     * @param text input text
-//     * @return SAMFileHeader
-//     */
-//    public static SAMFileHeader headerFromText(String text) {
-//        LineReader sr = new StringLineReader(text);
-//        final SAMTextHeaderCodec headerCodec = new SAMTextHeaderCodec();
-//        headerCodec.setValidationStringency(getValidationStringency());
-//        SAMFileHeader ret = headerCodec.decode(sr, null);
-//        return ret;
-//
-//    }
 
     public static final Text ONLY_KEY1 = new Text(); // avoid garbage collection
     public static final Text ONLY_VALUE = new Text(); // avoid garbage collection
@@ -457,71 +381,18 @@ public class HadoopUtilities {
             ONLY_VALUE.set(message);
             //noinspection unchecked
             ctx.write(ONLY_KEY1, ONLY_VALUE);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
 
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
 
         }
 
     }
 
-//    /**
-//     * real all records from a sam or BAM file
-//     * DONT TRY ON A GIGABYTE FILE!!!
-//     *
-//     * @param fileName file to read
-//     * @return !null array of records
-//     */
-//    public static IExtendedSamRecord[] readFile(String fileName) {
-//        return readFile(new File(fileName));
-//
-//    }
-//
-//    /**
-//     * real all records from a sam or BAM file
-//     * DONT TRY ON A GIGABYTE FILE!!!
-//     *
-//     * @param fileName file to read
-//     * @return !null array of records
-//     */
-//    public static SamRecord[] readFile(File fileName) {
-//
-//        List<IExtendedSamRecord> holder = new ArrayList<IExtendedSamRecord>();
-//
-//        final SAMFileReader inputSam = new SAMFileReader(fileName);
-//        inputSam.setValidationStringency(getValidationStringency());
-//        BamStatistics stat = new BamStatistics();
-//        for (final SAMRecord samRecord : inputSam) {
-//            IExtendedSamRecord rec = new ExtendedSamRecord(samRecord);
-//            holder.add(rec);
-//        }
-//
-//        inputSam.close();
-//        IExtendedSamRecord[] ret = new IExtendedSamRecord[holder.size()];
-//        holder.toArray(ret);
-//        return ret;
-//
-//    }
 
     public static final String FIELD_SEPARATOR = "\t";
-
-//    /**
-//     * turn a SAM header into text
-//     *
-//     * @param header
-//     * @return
-//     */
-//    public static String buildHeaderText(final SAMFileHeader header) {
-//        final StringWriter headerTextBuffer = new StringWriter();
-//        new SAMTextHeaderCodec().encode(headerTextBuffer, header);
-//        final String headerText = headerTextBuffer.toString();
-//        return headerText;
-//    }
-
 
     public static String[] readConfigFileFS(String pArg) {
         //   if (pArg.startsWith("s3n://"))
@@ -547,8 +418,7 @@ public class HadoopUtilities {
                     holder.add(line);
                     line = nr.readLine();
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace(System.err);
                 throw new RuntimeException(e);
 
@@ -578,7 +448,6 @@ public class HadoopUtilities {
     public static enum MapFailureCount {
         FailureCount
     }
-
 
 
     public static enum ReduceFailureCount {
@@ -674,9 +543,7 @@ public class HadoopUtilities {
     }
 
 
-
-    public static int numberReducersFromJobSize(JobSizeEnum size,int clusterSize)
-    {
+    public static int numberReducersFromJobSize(JobSizeEnum size, int clusterSize) {
         switch (size) {
             case Micro:
                 return 1;
@@ -687,43 +554,42 @@ public class HadoopUtilities {
             case Large:
                 return 8 * clusterSize;
             case Enormous:
-                 return 3500;
+                return 3500;
             default:
                 throw new IllegalArgumentException("unknown size");
         }
     }
 
 
+    public static void setRecommendedMaxReducers(Job job, JobSizeEnum jobSize) {
+        try {
+            final Configuration conf = job.getConfiguration();
+            if (isLocal(conf))
+                return; // local = 1 reducer
+            // Specify the number of reduces if defined as a non-negative param.
+            // Otherwise, use 9/10 of the maximum reduce tasks (as mentioned by Aalto Cloud,
+            // there appears to be no non-deprecated way to do this).
+            JobClient jobClient = new JobClient(new JobConf());
+            ClusterStatus clusterStatus = jobClient.getClusterStatus();
+            @SuppressWarnings("deprecation")
 
-    public static void setRecommendedMaxReducers(Job job,JobSizeEnum jobSize ) {
-         try {
-             final Configuration conf = job.getConfiguration();
-             if ( isLocal(conf))
-                 return; // local = 1 reducer
- // Specify the number of reduces if defined as a non-negative param.
-             // Otherwise, use 9/10 of the maximum reduce tasks (as mentioned by Aalto Cloud,
-             // there appears to be no non-deprecated way to do this).
-             JobClient jobClient = new JobClient(new JobConf());
-             ClusterStatus clusterStatus = jobClient.getClusterStatus();
-             @SuppressWarnings("deprecation")
 
+            int maxReduceTasks = clusterStatus.getMaxReduceTasks();
 
-             int maxReduceTasks = clusterStatus.getMaxReduceTasks();
+            maxReduceTasks = Math.max(maxReduceTasks, numberReducersFromJobSize(jobSize, getClusterSize()));
+            int reduces = conf.getInt("reduces", -1);
+            if (reduces >= 0) {
+                job.setNumReduceTasks(reduces);
+            } else {
+                reduces = (int) Math.ceil((double) maxReduceTasks * 9.0 / 10.0);
+            }
+            job.setNumReduceTasks(reduces);
 
-             maxReduceTasks = Math.max(maxReduceTasks,numberReducersFromJobSize(jobSize,getClusterSize()));
-             int reduces = conf.getInt("reduces", -1);
-             if (reduces >= 0) {
-                 job.setNumReduceTasks(reduces);
-             } else {
-                 reduces = (int) Math.ceil((double) maxReduceTasks * 9.0 / 10.0);
-             }
-              job.setNumReduceTasks(reduces);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-         } catch (IOException e) {
-             throw new RuntimeException(e);
-         }
-
-     }
+    }
 //    /**
 //     * Writes the record to disk.  Sort order has been taken care of by the time
 //     * this method is called.
@@ -774,20 +640,19 @@ public class HadoopUtilities {
 //    }
 
     /**
-        * convert a name like  C:\Inetpub\wwwroot\ISB\data\parameters\isb_default_input_kscore.xml
-        * to  isb_default_input_kscore.xml
-        *
-        * @param fileName !null file name
-        * @return !null name
-        */
-       public static String asLocalFile(String fileName) {
-           fileName = fileName.replace("\\", "/");
-           File f = new File(fileName);
-           return f.getName();
-       }
-    
-    
-    
+     * convert a name like  C:\Inetpub\wwwroot\ISB\data\parameters\isb_default_input_kscore.xml
+     * to  isb_default_input_kscore.xml
+     *
+     * @param fileName !null file name
+     * @return !null name
+     */
+    public static String asLocalFile(String fileName) {
+        fileName = fileName.replace("\\", "/");
+        File f = new File(fileName);
+        return f.getName();
+    }
+
+
     public static int getMaxSplitSize() {
         return gMaxSplitSize;
     }
@@ -850,7 +715,6 @@ public class HadoopUtilities {
         pConf.set("io.sort.mb", "300");
     }
 
-   
 
     private static Path gDefaultPath;
 
@@ -914,7 +778,6 @@ public class HadoopUtilities {
             outputLine(key + ":" + counters.get(key).getValue());
         }
     }
-
 
 
     public static void outputLine(String text) {
@@ -1041,7 +904,7 @@ public class HadoopUtilities {
     public static void setRecommendedMaxReducers(Job job) {
         try {
             final Configuration conf = job.getConfiguration();
-            if ( isLocal(conf))
+            if (isLocal(conf))
                 return; // local = 1 reducer
 // Specify the number of reduces if defined as a non-negative param.
             // Otherwise, use 9/10 of the maximum reduce tasks (as mentioned by Aalto Cloud,
@@ -1111,8 +974,6 @@ public class HadoopUtilities {
     }
 
 
-
-
     public static String[] sizesToStringList(final Map<Integer, Integer> pDbSizes) {
         // convert to a list of strings
         List<String> holder = new ArrayList<String>();
@@ -1124,7 +985,6 @@ public class HadoopUtilities {
         holder.toArray(dbSizeLines);
         return dbSizeLines;
     }
-
 
 
     public static boolean isFirstMapTask(final Mapper.Context context) {
@@ -1161,7 +1021,6 @@ public class HadoopUtilities {
         }
         return ret;
     }
-
 
 
     /**
@@ -1319,7 +1178,6 @@ public class HadoopUtilities {
     }
 
 
-
 //    public static PrintWriter buildWriter(final TaskInputOutputContext context,
 //                                          ISetableParameterHolder data, String added) {
 //        OutputStream os = buildOutputStream(context, data, added);
@@ -1380,14 +1238,15 @@ public class HadoopUtilities {
 //
 
 
-    public static void setInputPath(final Job pJob, String pInputFile) throws IOException {
+    public static Path setInputPath(final Job pJob, String pInputFile) throws IOException {
         if (pInputFile.startsWith("s3n://"))
             pInputFile = pInputFile.substring(pInputFile.lastIndexOf("s3n://"));
         System.err.println("inputFile " + pInputFile);
 
-        Path ath = new Path(pInputFile);
+        Path path = new Path(pInputFile);
 
-        org.apache.hadoop.mapreduce.lib.input.FileInputFormat.addInputPath(pJob, ath);
+        org.apache.hadoop.mapreduce.lib.input.FileInputFormat.addInputPath(pJob, path);
+        return path;
     }
 
 //    public static PrintWriter buildPrintWriter(TaskInputOutputContext context, ISetableParameterHolder data) {
@@ -1400,7 +1259,6 @@ public class HadoopUtilities {
 //        PrintWriter ret = new PrintWriter(out);
 //        return ret;
 //    }
-
 
 
     public static void safeWrite(final TaskInputOutputContext context, final String key,
@@ -1621,6 +1479,41 @@ public class HadoopUtilities {
     }
 
 
+    /**
+     * in the file system delete all files om the directory with filename as its path
+     * which end in tmp
+     *
+     * @param conf !null
+     */
+    public static void deleteTmpFiles(Path p, Configuration conf) {
+
+        if (p == null) {
+            throw new IllegalArgumentException("Tmp file path cannot be null");
+        }
+
+        try {
+//            String jobPath = conf.get(XTandemHadoopUtilities.PATH_KEY);
+//            Path p = new Path(jobPath);
+            FileSystem fs = FileSystem.get(conf);
+            FileStatus[] statuses = fs.listStatus(p);
+            if (statuses == null)
+                return; // no files
+            for (int i = 0; i < statuses.length; i++) {
+                FileStatus statuse = statuses[i];
+                if (statuse.isDir())
+                    continue; // we only care about files
+                Path testPath = statuse.getPath();
+                String s = testPath.getName();
+                if (s.endsWith(".tmp")) {
+                    fs.delete(testPath, false);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+    }
+
     public static Map<String, Long> getAllJobCounters(Job job) {
         try {
             Map<String, Long> ret = new HashMap<String, Long>();
@@ -1712,6 +1605,41 @@ public class HadoopUtilities {
         }
     }
 
+    /**
+     * parse an xml file using a specific handler
+     *
+     * @param is !null stream
+     * @return !null key value set
+     */
+    public static Map<String, String> readNotes(String str) {
+
+        final InputStream is = Util.getDescribedStream(str);
+        return readNotes(is, str);
+    }
+
+    /**
+     * parse a bioml file holding nothing but note tags
+     *
+     * @param is !null stream
+     * @return !null key value set
+     */
+    public static Map<String, String> readNotes(InputStream is, String url) {
+        throw new UnsupportedOperationException("Fix This"); // ToDo
+//        DelegatingSaxHandler handler = new DelegatingSaxHandler();
+//        final BiomlHandler handler1 = new BiomlHandler(handler, url);
+//        handler.pushCurrentHandler(handler1);
+//        handler.parseDocument(is);
+//
+//        if (handler1 instanceof AbstractXTandemElementSaxHandler) {
+//            AbstractXTandemElementSaxHandler<AbstractXTandemElementSaxHandler> handlerx = handler1;
+//            Map<String, String> notes = handlerx.getNotes();
+//          return notes;
+//
+//        }
+//        throw new UnsupportedOperationException("Fix This"); // ToDo
+//
+    }
+
 
     public static final String[] EXCLUDED_LIBRARIES =
             {
@@ -1775,6 +1703,73 @@ public class HadoopUtilities {
 //        Class mainClass = JXTandemLauncher.class;
 //        depl.deploy(deployDir, mainClass, args);
 //    }
-    
+
+
+    /**
+     * add a define top a list of arguments
+     *
+     * @param key   key
+     * @param value value
+     * @param args  old argument set
+     * @return new argument set
+     */
+    public static
+    @Nonnull
+    String[] addDefine(@Nonnull String key, @Nonnull String value, @Nonnull String[] args) {
+        String[] ret = new String[args.length + 2];
+        ret[0] = "-D";
+        ret[1] = key + "=" + value;
+        for (int i = 0; i < args.length; i++) {
+            ret[i + 2] = args[i];
+
+        }
+        return ret;
+    }
+
+
+
+
+    public static String buildCounterFileName(String fileName, Configuration pConf) {
+        String dir = pConf.get(DefaultParameterHolder.PATH_KEY);
+        if (dir == null)
+            dir = "";
+        else
+            dir += "/";
+        return dir + fileName;
+    }
+
+
+    public static final String BIN_COUNTER_START = "Binning:MZ";
+
+    /**
+     * return a map of mz vs count based on the results of pass1
+     *
+     * @param fileSystem !null file system
+     * @param fileName   pat to the file as a string
+     * @return
+     */
+    public static Map<Integer, Integer> readBinCounters(FileSystem fileSystem, String fileName) {
+        Path p = new Path(fileName);
+        Map ret = new HashMap<Integer, Integer>();
+        try {
+            FSDataInputStream open = fileSystem.open(p);
+            LineNumberReader rddr = new LineNumberReader(new InputStreamReader(open));
+            String line = rddr.readLine();
+            while (line != null) {
+                if (line.startsWith(BIN_COUNTER_START)) {
+                    line = line.substring(BIN_COUNTER_START.length());
+                    String[] items = line.split("=");
+                    int mz = Integer.parseInt(items[0].trim());
+                    int count = Integer.parseInt(items[1].trim());
+                    ret.put(mz, count);
+                }
+                line = rddr.readLine();
+            }
+        } catch (IOException e) {
+            throw new UnsupportedOperationException(e);
+        }
+        return ret;
+    }
+
 
 }

@@ -581,6 +581,10 @@ public class RawLocalFileSystem extends FileSystem {
 
     /// loads permissions, owner, and group from `ls -ld`
     private void loadPermissionInfo() {
+        if (Shell.WINDOWS)  {
+            setPermission(new FsPermission((short)0x777));
+            return;
+        }
       IOException e = null;
       try {
         String output = FileUtil.execCommand(new File(getPath().toUri()),

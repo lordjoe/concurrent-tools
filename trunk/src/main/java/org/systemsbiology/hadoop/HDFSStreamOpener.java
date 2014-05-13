@@ -27,8 +27,8 @@ public class HDFSStreamOpener implements IStreamOpener {
     public HDFSStreamOpener(Configuration config) {
         try {
             FileSystem fs = FileSystem.get(config);
-       //     String host = config.get(XTandemHadoopUtilities.HOST_KEY);
-      //      String portStr = config.get(XTandemHadoopUtilities.HOST_PORT_KEY);
+       //     String host = config.get(HadoopUtilities.HOST_KEY);
+      //      String portStr = config.get(HadoopUtilities.HOST_PORT_KEY);
       //       if(host == null)    {
                 m_Accesor = new HDFSAccessor(fs);
 //            }
