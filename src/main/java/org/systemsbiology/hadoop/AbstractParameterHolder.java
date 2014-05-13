@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * oorg.systemsbiology.hadoop.AbstractParameterHolder
+ * org.systemsbiology.hadoop.AbstractParameterHolder
  *    This class holds a set of name value pairs - held as
  *     strings but with methods to treat values as ints, doubles or enums as
  *     well as Strings - it is used to handle many of the parameters used by
