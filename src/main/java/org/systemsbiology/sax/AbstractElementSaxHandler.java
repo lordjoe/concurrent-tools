@@ -21,7 +21,7 @@ public abstract class AbstractElementSaxHandler<T> extends AbstractSaxParser imp
 
     private final String m_InitiatingTag;
     private final StringBuilder m_IncludedText = new StringBuilder();
-      private T m_ElementObject;  // Object represented by this element
+    private T m_ElementObject;  // Object represented by this element
 
 
     protected AbstractElementSaxHandler(String initTag, IElementHandler pParent)
@@ -50,11 +50,6 @@ public abstract class AbstractElementSaxHandler<T> extends AbstractSaxParser imp
     }
 
 
-    public static final String[] FORGIVEN_DUPLICATES_FROM_DEFAULT_ISB = {
-            "refine, point mutations",
-            "scoring, cyclic permutation",
-            "scoring, include reverse",
-    };
 
     public void setParent(final IElementHandler pParent) {
         if(m_Parent == pParent)

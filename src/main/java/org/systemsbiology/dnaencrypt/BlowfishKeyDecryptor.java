@@ -1,6 +1,7 @@
 package org.systemsbiology.dnaencrypt;
 
 import com.lordjoe.utilities.*;
+import com.lordjoe.utilities.Base64;
 
 import java.util.*;
 
