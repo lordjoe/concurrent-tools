@@ -18,14 +18,7 @@ public class XMLUtilities
     public static XMLUtilities[] EMPTY_ARRAY = {};
     public static Class THIS_CLASS = XMLUtilities.class;
 
-
-    public static Throwable gertUltimateCause(Throwable ex) {
-        Throwable cause = ex.getCause();
-        if(cause == null || cause == ex)
-            return ex;
-        return gertUltimateCause(cause);
-    }
-    /**
+     /**
      * copy code that works well for text files organized into lines
      * @param inp - !null exisating readable file
      * @param out - writable file

@@ -1,6 +1,7 @@
 package org.systemsbiology.hadoop;
 
 
+import com.lordjoe.utilities.*;
 import org.junit.*;
 import org.systemsbiology.remotecontrol.*;
 import org.systemsbiology.xml.*;
@@ -158,7 +159,7 @@ public class HDFSTests {
 
 
         } catch (Exception e) {
-            Throwable cause = XMLUtilities.gertUltimateCause(e);
+            Throwable cause = ExceptionUtilities.getUltimateCause(e);
             if (cause instanceof EOFException) {   // hdfs not available
                 return;
             }

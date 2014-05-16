@@ -11,7 +11,10 @@ import java.io.*;
  */
 public class FileSystemTests {
 
-
+    /**
+     * make sure /tmp exists and has something in it!!!
+     * @throws Exception
+     */
     @Test
     public void testFileSize() throws Exception {
         File top = new File("/");
