@@ -65,6 +65,9 @@ public class HadoopJob implements IHadoopJob {
         HadoopJob ret = new HadoopJob();
         ret.setMainClass(mainClass.getName());
         ret.setJobDirectory(jobDirectory);
+
+        if(getDefaultJarName() != null)
+          ret.setJarFile("jobs" + "/" + getDefaultJarName());
         if (isJarRequired()) {
             String jarName = jobDirectory + "/" + ret.makeJarName();
             HadoopDeployer.makeHadoopJar(jarName);
@@ -90,7 +93,7 @@ public class HadoopJob implements IHadoopJob {
     }
 
     private UUID m_UID = UUID.randomUUID();
-    private String m_JarFile = "jobs" + "/" + getDefaultJarName();
+    private String m_JarFile;
     private String m_MainClass;
     private String m_SourceFiles;
     private String m_JobDirectory;

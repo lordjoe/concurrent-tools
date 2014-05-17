@@ -1,5 +1,8 @@
 package com.lordjoe.filters;
 
+import org.systemsbiology.sax.*;
+import org.xml.sax.*;
+
 import javax.annotation.*;
 import java.io.*;
 
@@ -10,6 +13,7 @@ import java.io.*;
  * @date 16/05/2014
  */
 public class FileFilters {
+    public static final String TAG = "FileFilter";
 
     /**
      * filter of type file
@@ -84,4 +88,40 @@ public class FileFilters {
         };
     }
 
+    /**
+     * com.lordjoe.filters.FilterCollectionSaxHandler
+     *   reads xml document <Filters></Filters>
+     * @author Steve Lewis
+     * @date 16/05/2014
+     */
+    public static class FileFilterSaxHandler extends AbstractElementSaxHandler<ITypedFilter<File>> implements ITopLevelSaxHandler {
+
+        private ITypedFilter enclosed;
+
+        public FileFilterSaxHandler(DelegatingSaxHandler pParent) {
+            super(TAG, pParent);
+          }
+
+        public FileFilterSaxHandler(IElementHandler parent) {
+             super(TAG, parent);
+             }
+
+
+
+           @Override
+           public void handleAttributes(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+               super.handleAttributes(uri, localName, qName, attributes);    //To change body of overridden methods use File | Settings | File Templates.
+                throw new UnsupportedOperationException("Fix This"); // ToDo
+           }
+
+        /**
+         * finish handling and set up the enclosed object
+         * Usually called when the end tag is seen
+         */
+        @Override
+        public void finishProcessing() {
+            if (true) throw new UnsupportedOperationException("Fix This");
+
+        }
+    }
 }
