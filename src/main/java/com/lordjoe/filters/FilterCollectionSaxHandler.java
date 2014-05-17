@@ -39,10 +39,17 @@ public class FilterCollectionSaxHandler extends AbstractElementSaxHandler<TypedF
     private void addHardCodedHandlers()
     {
         handlers.put(NotFilterSaxHandler.TAG,new NotFilterSaxHandler(this)) ;
-    }
+        handlers.put(StringFilters.TAG,new StringFilters.StringFilterSaxHandler(this)) ;
+        handlers.put(FileFilters.TAG,new FileFilters.FileFilterSaxHandler(this)) ;
+     }
 
     public AbstractElementSaxHandler getHandler(String tag) {
-        return handlers.get(tag);
+        final AbstractElementSaxHandler saxHandler = handlers.get(tag);
+        if(saxHandler == null)
+            throw new IllegalArgumentException("cannot file handler " + tag);
+        final DelegatingSaxHandler handler = getHandler();
+        saxHandler.setHandler(handler);
+        return saxHandler;
     }
 
     @Override
@@ -54,6 +61,7 @@ public class FilterCollectionSaxHandler extends AbstractElementSaxHandler<TypedF
     public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
         if (!TAG.equals(qName)) {
             final AbstractElementSaxHandler handler = getHandler(qName);
+            handler.setParent(this);
             getHandler().pushCurrentHandler(handler);
             handler.handleAttributes(uri, localName, qName, attributes);
             return;

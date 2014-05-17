@@ -5,7 +5,8 @@ import org.xml.sax.*;
 
 /**
  * com.lordjoe.filters.FilterCollectionSaxHandler
- *   reads xml document <Filters></Filters>
+ * reads xml document <Filters></Filters>
+ *
  * @author Steve Lewis
  * @date 16/05/2014
  */
@@ -16,39 +17,43 @@ public class NotFilterSaxHandler extends AbstractElementSaxHandler<NotTypeFilter
 
     public NotFilterSaxHandler(DelegatingSaxHandler pParent) {
         super(TAG, pParent);
-      }
+    }
 
     public NotFilterSaxHandler(IElementHandler parent) {
-         super(TAG, parent);
-         }
+        super(TAG, parent);
+    }
 
 
+    @Override
+    public void handleAttributes(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+        super.handleAttributes(uri, localName, qName, attributes);    //To change body of overridden methods use File | Settings | File Templates.
+    }
 
-       @Override
-       public void handleAttributes(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-           super.handleAttributes(uri, localName, qName, attributes);    //To change body of overridden methods use File | Settings | File Templates.
-       }
+    @Override
+    public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+        if (!TAG.equals(qName)) {
+            final FilterCollectionSaxHandler parent = (FilterCollectionSaxHandler) getParent();
+            final AbstractElementSaxHandler handler = parent.getHandler(qName);
+            handler.setParent(this);
+            final DelegatingSaxHandler handler1 = getHandler();
+            handler1.pushCurrentHandler(handler);
+            handler.handleAttributes(uri, localName, qName, attributes);
+            return;
+        }
+        super.startElement(uri, localName, qName, attributes);    //To change body of overridden methods use File | Settings | File Templates.
+    }
 
-       @Override
-       public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-           if (!"Not".equals(qName)) {
-               final AbstractElementSaxHandler handler = ((FilterCollectionSaxHandler) getParent()).getHandler(qName);
-               getHandler().pushCurrentHandler(handler);
-               handler.handleAttributes(uri, localName, qName, attributes);
-               return;
-           }
-           super.startElement(uri, localName, qName, attributes);    //To change body of overridden methods use File | Settings | File Templates.
-       }
+    @Override
+    public void endElement(final String elx, final String localName, final String el) throws SAXException {
+        if (!TAG.equals(el)) {
+            ISaxHandler ch = getHandler().popCurrentHandler();
+            enclosed = (ITypedFilter) ((AbstractElementSaxHandler) ch).getElementObject();
+            return;
+        }
+        setElementObject(new NotTypeFilter(enclosed));
 
-       @Override
-       public void endElement(final String elx, final String localName, final String el) throws SAXException {
-           if (!"Not".equals(el)) {
-               ISaxHandler ch = getHandler().popCurrentHandler();
-               enclosed  = (ITypedFilter)((AbstractElementSaxHandler)ch).getElementObject();
-               return;
-           }
-           super.endElement(elx, localName, el);    //To change body of overridden methods use File | Settings | File Templates.
-       }
+        super.endElement(elx, localName, el);    //To change body of overridden methods use File | Settings | File Templates.
+    }
 
 
     /**
@@ -57,6 +62,6 @@ public class NotFilterSaxHandler extends AbstractElementSaxHandler<NotTypeFilter
      */
     @Override
     public void finishProcessing() {
-        setElementObject(new NotTypeFilter(enclosed));
+//        setElementObject(new NotTypeFilter(enclosed));
     }
 }
