@@ -19,7 +19,9 @@ public class ParseFiltersTest {
             "</Not>\n" +
             "<FileFilter extension=\"mgf2\" />\n" +
             "<FileFilter extension=\"log\" />\n" +
-            "<Filter applicableType=\"uk.ac.ebi.pride.spectracluster.spectrum.ISpectrum\" charge=\"2\" />\n" +
+            "<!--\n" +
+             "<Filter applicableType=\"uk.ac.ebi.pride.spectracluster.spectrum.ISpectrum\" charge=\"2\" />\n" +
+            "-->\n" +
             "</Filters>\n";
 
     @Test

@@ -10,17 +10,14 @@ import org.xml.sax.*;
  * @author Steve Lewis
  * @date 16/05/2014
  */
-public class NotFilterSaxHandler extends AbstractElementSaxHandler<NotTypeFilter> implements ITopLevelSaxHandler {
+public class NotFilterSaxHandler extends AbstractFilterCollectionSaxHandler<NotTypeFilter>  {
     public static final String TAG = "Not";
 
     private ITypedFilter enclosed;
 
-    public NotFilterSaxHandler(DelegatingSaxHandler pParent) {
-        super(TAG, pParent);
-    }
 
-    public NotFilterSaxHandler(IElementHandler parent) {
-        super(TAG, parent);
+    public NotFilterSaxHandler(FilterCollectionSaxHandler parent) {
+        super(TAG, parent,parent);
     }
 
 
@@ -32,7 +29,7 @@ public class NotFilterSaxHandler extends AbstractElementSaxHandler<NotTypeFilter
     @Override
     public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
         if (!TAG.equals(qName)) {
-            final FilterCollectionSaxHandler parent = (FilterCollectionSaxHandler) getParent();
+            final FilterCollectionSaxHandler parent =   getParentCollection();
             final AbstractElementSaxHandler handler = parent.getHandler(qName);
             handler.setParent(this);
             final DelegatingSaxHandler handler1 = getHandler();

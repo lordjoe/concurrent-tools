@@ -72,8 +72,10 @@ public class FilterCollectionSaxHandler extends AbstractElementSaxHandler<TypedF
     @Override
     public void endElement(final String elx, final String localName, final String el) throws SAXException {
         if (!TAG.equals(elx)) {
-            ISaxHandler ch = getHandler().popCurrentHandler();
-            ITypedFilter added = (ITypedFilter) ((AbstractElementSaxHandler) ch).getElementObject();
+            final DelegatingSaxHandler handler = getHandler();
+            ISaxHandler ch = handler.popCurrentHandler();
+            final Object elementObject = ((AbstractElementSaxHandler) ch).getElementObject();
+            ITypedFilter added = (ITypedFilter) elementObject;
             return;
         }
         super.endElement(elx, localName, el);    //To change body of overridden methods use File | Settings | File Templates.

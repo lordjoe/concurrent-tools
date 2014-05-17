@@ -55,9 +55,7 @@ public class StringFilters {
                     return null;
                 return testObject;
             }
-
-            ;
-        };
+         };
     }
 
     public static ITypedFilter<String> getStartsWithFilter(final String ext) {
@@ -81,15 +79,14 @@ public class StringFilters {
      * @author Steve Lewis
      * @date 16/05/2014
      */
-    public static class StringFilterSaxHandler extends AbstractElementSaxHandler<ITypedFilter<String>> implements ITopLevelSaxHandler {
+    public static class StringFilterSaxHandler extends AbstractFilterCollectionSaxHandler<String>  {
 
         private ITypedFilter enclosed;
-        private final FilterCollectionSaxHandler parentCollection;
 
         public StringFilterSaxHandler(FilterCollectionSaxHandler parent) {
-            super(TAG, (IElementHandler)null);
-            parentCollection = parent;
-        }
+            super(TAG, parent);
+          }
+
 
 
         @Override
@@ -111,14 +108,6 @@ public class StringFilters {
             throw new UnsupportedOperationException("Fix This"); // ToDo
         }
 
-
-        /**
-         * finish handling and set up the enclosed object
-         * Usually called when the end tag is seen
-         */
-        @Override
-        public void finishProcessing() {
-          }
 
 
     }
