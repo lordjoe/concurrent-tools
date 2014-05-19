@@ -1,6 +1,5 @@
 package com.lordjoe.filters;
 
-import org.systemsbiology.sax.*;
 import org.xml.sax.*;
 
 import javax.annotation.*;
@@ -39,6 +38,7 @@ public class FileFilters {
             if(filters.passes(file) != null) {
                 final File[] files = file.listFiles();
                 if(files != null) {
+                    //noinspection ForLoopReplaceableByForEach
                     for (int i = 0; i < files.length; i++) {
                         File file1 = files[i];
                         internalApplyFilters(holder, file1, filters);
@@ -229,6 +229,7 @@ public class FileFilters {
         }
 
 
+        @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
         @Override
         public void handleAttributes(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             super.handleAttributes(uri, localName, qName, attributes);    //To change body of overridden methods use File | Settings | File Templates.
@@ -258,6 +259,7 @@ public class FileFilters {
                 return;
             }
             StringBuilder sb = new StringBuilder();
+            //noinspection ForLoopReplaceableByForEach
                for (int i = 0; i < attributes.getLength(); i++) {
                    sb.append(attributes.getQName(i) + "=\"" + attributes.getValue(i) + "\" ");
 

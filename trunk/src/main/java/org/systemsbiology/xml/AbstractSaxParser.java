@@ -16,9 +16,6 @@ import java.io.*;
  */
 public abstract class AbstractSaxParser extends DefaultHandler implements ISaxHandler
 {
-    public static AbstractSaxParser[] EMPTY_ARRAY = {};
-    public static Class THIS_CLASS = AbstractSaxParser.class;
-
 
     private String m_strFileName;
 

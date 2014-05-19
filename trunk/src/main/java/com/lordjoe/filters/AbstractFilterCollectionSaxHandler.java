@@ -9,7 +9,7 @@ import org.systemsbiology.sax.*;
  * @date 5/17/14
  */
 public abstract class AbstractFilterCollectionSaxHandler<T> extends AbstractElementSaxHandler<ITypedFilter<T>> {
-    private final FilterCollectionSaxHandler parentCollection;
+    private FilterCollectionSaxHandler parentCollection;
 
     public AbstractFilterCollectionSaxHandler(String tag,FilterCollectionSaxHandler parentHandler,IElementHandler parent) {
         super(tag, parent);
@@ -19,6 +19,17 @@ public abstract class AbstractFilterCollectionSaxHandler<T> extends AbstractElem
     public AbstractFilterCollectionSaxHandler(String tag,FilterCollectionSaxHandler parentHandler) {
         this(tag, parentHandler, null);
       }
+
+    public void setParentCollection(FilterCollectionSaxHandler pc)
+    {
+        if(pc == null) {
+            parentCollection = null;
+            return;
+        }
+         if(parentCollection != null)
+             throw new IllegalStateException("cannot reset parent collection");
+        parentCollection = pc;
+    }
 
     public FilterCollectionSaxHandler getParentCollection() {
         return parentCollection;

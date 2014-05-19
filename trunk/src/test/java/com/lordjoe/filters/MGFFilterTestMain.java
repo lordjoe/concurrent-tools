@@ -1,13 +1,10 @@
-package com.lordjoe.fiters;
-
-import com.lordjoe.filters.*;
-import org.systemsbiology.xml.*;
+package com.lordjoe.filters;
 
 import java.io.*;
 import java.util.*;
 
 /**
- * com.lordjoe.fiters.MGFFilterTestMain
+ * com.lordjoe.filters.MGFFilterTestMain
  *
  * @author Steve Lewis
  * @date 19/05/2014

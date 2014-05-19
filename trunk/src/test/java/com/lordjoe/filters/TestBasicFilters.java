@@ -1,13 +1,12 @@
-package com.lordjoe.fiters;
+package com.lordjoe.filters;
 
-import com.lordjoe.filters.*;
 import org.junit.*;
 
 import java.io.*;
 import java.util.*;
 
 /**
- * com.lordjoe.fiters.TestBasicFilters
+ * com.lordjoe.filters.TestBasicFilters
  *
  * @author Steve Lewis
  * @date 16/05/2014

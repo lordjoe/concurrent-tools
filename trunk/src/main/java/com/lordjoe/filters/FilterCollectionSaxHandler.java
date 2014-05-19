@@ -38,19 +38,22 @@ public class FilterCollectionSaxHandler extends AbstractElementSaxHandler<TypedF
     /**
      * known tag handlers - others may be added at runtime
      */
-    private void addHardCodedHandlers()
-    {
-        handlers.put(NotFilterSaxHandler.TAG,new NotFilterSaxHandler(this)) ;
-        handlers.put("And",new CompositeFilterSaxHandler("And",this)) ;
-        handlers.put("Or",new CompositeFilterSaxHandler("Or",this)) ;
-        handlers.put(StringFilters.TAG,new StringFilters.StringFilterSaxHandler(this)) ;
-        handlers.put(FileFilters.TAG,new FileFilters.FileFilterSaxHandler(this)) ;
-        handlers.put("ExpressionFilter",new ExpressionFilterSaxHandler(this)) ;
-       }
+    private void addHardCodedHandlers() {
+        final Map<String, AbstractElementSaxHandler> handlersC = TypedFilterCollection.getHandlers();
+        for (String s : handlersC.keySet()) {
+            final AbstractElementSaxHandler sh = handlersC.get(s);
+            if (sh instanceof AbstractFilterCollectionSaxHandler) {
+                AbstractFilterCollectionSaxHandler ab = (AbstractFilterCollectionSaxHandler) sh;
+                ab.setParentCollection(null);  // allow reseting
+                ab.setParentCollection(this);
+              }
+            handlers.put(s,sh);
+        }
+    }
 
     public AbstractElementSaxHandler getHandler(String tag) {
         final AbstractElementSaxHandler saxHandler = handlers.get(tag);
-        if(saxHandler == null)
+        if (saxHandler == null)
             throw new IllegalArgumentException("cannot file handler " + tag);
         final DelegatingSaxHandler handler = getHandler();
         saxHandler.setHandler(handler);
