@@ -1,14 +1,9 @@
-package com.lordjoe.fiters;
+package com.lordjoe.filters;
 
-import com.lordjoe.expressions.*;
-import com.lordjoe.filters.*;
 import org.junit.*;
-import org.systemsbiology.xml.*;
-
-import java.io.*;
 
 /**
- * com.lordjoe.fiters.ParseFiltersTest
+ * com.lordjoe.filters.ParseFiltersTest
  *
  * @author Steve Lewis
  * @date 16/05/2014
@@ -39,6 +34,8 @@ public class ParseFiltersTest {
     @Test
     public void testParseFilters() {
          final TypedFilterCollection typedFilterCollection = TypedFilterCollection.parse(FILTER_1 );
+
+
     }
 
 }
