@@ -54,6 +54,10 @@ public abstract class AbstractElementSaxHandler<T> extends AbstractSaxParser imp
     public void setParent(final IElementHandler pParent) {
         if(m_Parent == pParent)
             return;
+        if(pParent == null) {
+            m_Parent = pParent;
+            return; // ok to clear
+        }
         if(m_Parent != null)
             throw new IllegalStateException("m_ParentStream can only be set once");
         m_Parent = pParent;

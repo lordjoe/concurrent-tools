@@ -38,8 +38,8 @@ public class TestBasicFilters {
                 passesAnswer.add(passes);
                 Assert.assertNull(not_caps_filter.passes(passes));
             } else {
-                Assert.assertNotNull(not_caps_filter.passes(passes));
-                Assert.assertEquals(passes, not_caps_filter.passes(passes));
+                Assert.assertNotNull(not_caps_filter.passes(str));
+                Assert.assertEquals(str, not_caps_filter.passes(str));
             }
         }
 

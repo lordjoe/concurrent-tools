@@ -1,5 +1,6 @@
 package com.lordjoe.fiters;
 
+import com.lordjoe.expressions.*;
 import com.lordjoe.filters.*;
 import org.junit.*;
 import org.systemsbiology.xml.*;
@@ -19,15 +20,25 @@ public class ParseFiltersTest {
             "</Not>\n" +
             "<FileFilter extension=\"mgf2\" />\n" +
             "<FileFilter extension=\"log\" />\n" +
-            "<!--\n" +
-             "<Filter applicableType=\"uk.ac.ebi.pride.spectracluster.spectrum.ISpectrum\" charge=\"2\" />\n" +
+            "<Or>\n" +
+            "<FileFilter extension=\"mgf2\" />\n" +
+            "<FileFilter extension=\"log\" />\n" +
+            "</Or>\n" +
+            "<ExpressionFilter applicableType=\"com.lordjoe.expressions.ExpressionTests$TestRectangle\" " +
+            "       expression=\"x.getArea() &lt; 20\" />\n" +
+            "<And>\n" +
+            "<StringFilter startsWith=\"F\" />\n" +
+            "<StringFilter endsWith=\"e\" />\n" +
+            "</And>\n" +
+
+            "<!-- will not run without spectrum class\n" +
+            "<Filter applicableType=\"uk.ac.ebi.pride.spectracluster.spectrum.ISpectrum\" charge=\"2\" />\n" +
             "-->\n" +
             "</Filters>\n";
 
     @Test
     public void testParseFilters() {
-        FilterCollectionSaxHandler handler = new FilterCollectionSaxHandler();
-        final TypedFilterCollection typedFilterCollection = XMLUtilities.parseXMLString(FILTER_1, handler);
+         final TypedFilterCollection typedFilterCollection = TypedFilterCollection.parse(FILTER_1 );
     }
 
 }

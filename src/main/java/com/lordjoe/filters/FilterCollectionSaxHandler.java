@@ -1,7 +1,6 @@
 package com.lordjoe.filters;
 
 import org.systemsbiology.sax.*;
-import org.systemsbiology.xml.*;
 import org.xml.sax.*;
 
 import java.util.*;
@@ -36,12 +35,18 @@ public class FilterCollectionSaxHandler extends AbstractElementSaxHandler<TypedF
         addHardCodedHandlers();
     }
 
+    /**
+     * known tag handlers - others may be added at runtime
+     */
     private void addHardCodedHandlers()
     {
         handlers.put(NotFilterSaxHandler.TAG,new NotFilterSaxHandler(this)) ;
+        handlers.put("And",new CompositeFilterSaxHandler("And",this)) ;
+        handlers.put("Or",new CompositeFilterSaxHandler("Or",this)) ;
         handlers.put(StringFilters.TAG,new StringFilters.StringFilterSaxHandler(this)) ;
         handlers.put(FileFilters.TAG,new FileFilters.FileFilterSaxHandler(this)) ;
-     }
+        handlers.put("ExpressionFilter",new ExpressionFilterSaxHandler(this)) ;
+       }
 
     public AbstractElementSaxHandler getHandler(String tag) {
         final AbstractElementSaxHandler saxHandler = handlers.get(tag);
@@ -71,11 +76,12 @@ public class FilterCollectionSaxHandler extends AbstractElementSaxHandler<TypedF
 
     @Override
     public void endElement(final String elx, final String localName, final String el) throws SAXException {
-        if (!TAG.equals(elx)) {
+        if (!TAG.equals(el)) {
             final DelegatingSaxHandler handler = getHandler();
             ISaxHandler ch = handler.popCurrentHandler();
             final Object elementObject = ((AbstractElementSaxHandler) ch).getElementObject();
             ITypedFilter added = (ITypedFilter) elementObject;
+            getElementObject().addFilter(added);
             return;
         }
         super.endElement(elx, localName, el);    //To change body of overridden methods use File | Settings | File Templates.
