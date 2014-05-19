@@ -1,6 +1,6 @@
 package com.lordjoe.filters;
 
-import org.systemsbiology.sax.*;
+
 import org.xml.sax.*;
 
 import javax.annotation.*;
@@ -66,8 +66,6 @@ public class StringFilters {
                     return null;
                 return testObject;
             }
-
-            ;
         };
     }
 

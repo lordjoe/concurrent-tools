@@ -10,16 +10,32 @@ import org.xml.sax.*;
  * @author Steve Lewis
  * @date 16/05/2014
  */
-public class NotFilterSaxHandler extends AbstractFilterCollectionSaxHandler<NotTypeFilter>  {
-    public static final String TAG = "Not";
+public class CompositeFilterSaxHandler extends AbstractFilterCollectionSaxHandler<NotTypeFilter>  {
 
-    private ITypedFilter enclosed;
+    private final AbstractCompositeFilter enclosed;
+    private final String tag;
 
 
-    public NotFilterSaxHandler(FilterCollectionSaxHandler parent) {
-        super(TAG, parent,parent);
+    public CompositeFilterSaxHandler(String tag,FilterCollectionSaxHandler parent) {
+
+        super(tag, parent,parent);
+        this.tag = tag;
+        if("And".equals(tag))  {
+            enclosed = new AndTypedFilter();
+            setElementObject(enclosed);
+            return;
+        }
+        if("Or".equals(tag))  {
+             enclosed = new AndTypedFilter();
+            setElementObject(enclosed);
+             return;
+         }
+        throw new IllegalArgumentException("only And and Or tags handled");
+     }
+
+    protected AbstractCompositeFilter getEnclosed() {
+        return enclosed;
     }
-
 
     @Override
     public void handleAttributes(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
@@ -28,9 +44,10 @@ public class NotFilterSaxHandler extends AbstractFilterCollectionSaxHandler<NotT
 
     @Override
     public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-        if (!TAG.equals(qName)) {
+        if (!tag.equals(qName)) {
             final FilterCollectionSaxHandler parent =   getParentCollection();
             final AbstractElementSaxHandler handler = parent.getHandler(qName);
+            handler.setParent(null);   // allow reuse
             handler.setParent(this);
             final DelegatingSaxHandler handler1 = getHandler();
             handler1.pushCurrentHandler(handler);
@@ -43,12 +60,12 @@ public class NotFilterSaxHandler extends AbstractFilterCollectionSaxHandler<NotT
     @SuppressWarnings("unchecked")
     @Override
     public void endElement(final String elx, final String localName, final String el) throws SAXException {
-        if (!TAG.equals(el)) {
+        if (!tag.equals(el)) {
             ISaxHandler ch = getHandler().popCurrentHandler();
-            enclosed = (ITypedFilter) ((AbstractElementSaxHandler) ch).getElementObject();
+            ITypedFilter added = (ITypedFilter) ((AbstractElementSaxHandler) ch).getElementObject();
+            enclosed.addFilter(added);
             return;
         }
-        setElementObject(new NotTypeFilter(enclosed));
 
         super.endElement(elx, localName, el);    //To change body of overridden methods use File | Settings | File Templates.
     }
