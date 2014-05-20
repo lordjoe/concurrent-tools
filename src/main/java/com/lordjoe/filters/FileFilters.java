@@ -130,6 +130,30 @@ public class FileFilters {
         };
     }
     /**
+     * return true of a file has the given name
+     * @param ext
+     * @return
+     */
+    public static ITypedFilter<File> getNameFilter(final String ext) {
+        return new AbstractFileTypedFilter() {
+            /**
+             * return 0 if it passes the filter otherwise return null
+             *
+             * @param testObject
+             * @return as above
+             */
+            @Override
+            public File passes(@Nonnull File testObject) {
+                if (!testObject.exists())
+                    return null;
+                final String name = testObject.getName();
+                if (!name.equals(ext))
+                    return null;
+                return testObject;
+            }
+        };
+    }
+    /**
         * return true of a file a length greater than maxlength
         *
         * @param length max allowed length
@@ -239,7 +263,12 @@ public class FileFilters {
                  setElementObject(getHasExtensionFilter(value));
                 return;
             }
-            value = attributes.getValue("minimumLength");
+            value = attributes.getValue("name");
+               if (value != null) {
+                    setElementObject(getNameFilter(value));
+                   return;
+               }
+               value = attributes.getValue("minimumLength");
             String otherValue = attributes.getValue("maximumLength");
 
              if (value != null) {

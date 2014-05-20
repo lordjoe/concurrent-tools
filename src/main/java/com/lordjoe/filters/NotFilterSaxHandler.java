@@ -31,8 +31,9 @@ public class NotFilterSaxHandler extends AbstractFilterCollectionSaxHandler<NotT
         if (!TAG.equals(qName)) {
             final FilterCollectionSaxHandler parent =   getParentCollection();
             final AbstractElementSaxHandler handler = parent.getHandler(qName);
+            handler.setParent(null);
             handler.setParent(this);
-            final DelegatingSaxHandler handler1 = getHandler();
+             final DelegatingSaxHandler handler1 = getHandler();
             handler1.pushCurrentHandler(handler);
             handler.handleAttributes(uri, localName, qName, attributes);
             return;
