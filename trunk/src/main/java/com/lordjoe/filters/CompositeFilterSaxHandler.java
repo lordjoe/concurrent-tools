@@ -26,7 +26,7 @@ public class CompositeFilterSaxHandler extends AbstractFilterCollectionSaxHandle
             return;
         }
         if("Or".equals(tag))  {
-             enclosed = new AndTypedFilter();
+             enclosed = new OrTypedFilter();
             setElementObject(enclosed);
              return;
          }
