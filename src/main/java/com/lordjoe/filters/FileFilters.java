@@ -20,7 +20,7 @@ public class FileFilters {
      * @param filters  filters to apply
      * @return all filts that pass
      */
-    public static List<File> applyFilters(@Nonnull File startDir, @Nonnull TypedFilterCollection filters) {
+    public static List<File> applyFilters(@Nonnull File startDir, @Nonnull ITypedFilter<Object> filters) {
         List<File> holder = new ArrayList<File>();
 
         internalApplyFilters(holder, startDir, filters);
@@ -33,7 +33,44 @@ public class FileFilters {
      * @param filters  filters to apply
      * @return all filts that pass
      */
-    protected static void internalApplyFilters(@Nonnull List<File> holder, @Nonnull File file, @Nonnull TypedFilterCollection filters) {
+    public static List<File> applyFileFilters(@Nonnull File startDir, @Nonnull ITypedFilter<File> filters) {
+        List<File> holder = new ArrayList<File>();
+
+        internalApplyFileFilters(holder, startDir, filters);
+
+        return holder;
+    }
+
+    /**
+     * @param startDir existing file or directory
+     * @param filters  filters to apply
+     * @return all filts that pass
+     */
+    protected static void internalApplyFileFilters(@Nonnull List<File> holder, @Nonnull File file, @Nonnull ITypedFilter<File> filters) {
+        if (file.isDirectory()) {
+            if(filters.passes(file) != null) {
+                final File[] files = file.listFiles();
+                if(files != null) {
+                    //noinspection ForLoopReplaceableByForEach
+                    for (int i = 0; i < files.length; i++) {
+                        File file1 = files[i];
+                        internalApplyFileFilters(holder, file1, filters);
+                    }
+                }
+            }
+        } else {
+            if(filters.passes(file) != null) {
+                holder.add(file);
+            }
+        }
+    }
+
+    /**
+     * @param startDir existing file or directory
+     * @param filters  filters to apply
+     * @return all filts that pass
+     */
+    protected static void internalApplyFilters(@Nonnull List<File> holder, @Nonnull File file, @Nonnull ITypedFilter<Object> filters) {
         if (file.isDirectory()) {
             if(filters.passes(file) != null) {
                 final File[] files = file.listFiles();
