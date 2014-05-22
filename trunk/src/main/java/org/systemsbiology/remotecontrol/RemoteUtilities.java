@@ -93,7 +93,7 @@ public class RemoteUtilities {
     }
 
     public static void setUser(String user) {
-        g_User = user;
+          g_User = user;
     }
 
     public static final File KEYTAB_DIR = new File("/keytabs");
