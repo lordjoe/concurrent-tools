@@ -162,6 +162,8 @@ public class FileFilters {
                 final String name = testObject.getName();
                 if (!name.endsWith("." + ext))
                     return null;
+                if(testObject.length() == 0)
+                    return null; // length > 0
                 return testObject;
             }
         };
