@@ -121,12 +121,13 @@ public class RemoteSession implements UserInfo {
     }
 
     public static boolean runNShot(final IHadoopController pHc) {
+        final String defaultPath = RemoteUtilities.getDefaultPath();
         //   pHc.guaranteeFilesOnHDFS(new File("E:/data/Moby"), "/user/slewis/moby", "/user/slewis/moby");
         IHadoopJob job = HadoopJob.buildJob(
                 CapitalWordCount.class,
                 RemoteUtilities.getDefaultPath() + "/moby",     // data on hdfs
-                "/users/slewis/jobs",      // jar location
-                RemoteUtilities.getDefaultPath()             // output location - will have outputN added
+                defaultPath + "/jobs",      // jar location
+                  RemoteUtilities.getDefaultPath()             // output location - will have outputN added
 
         );
 
@@ -136,12 +137,13 @@ public class RemoteSession implements UserInfo {
 
     private static boolean runWordCount(final IHadoopController pHc) {
         //   pHc.guaranteeFilesOnHDFS(new File("E:/data/Moby"), "/user/slewis/moby", "/user/slewis/moby");
-        String inputDirectory = RemoteUtilities.getDefaultPath() + "/books";
+        final String defaultPath = RemoteUtilities.getDefaultPath();
+        String inputDirectory = defaultPath + "/books";
         IHadoopJob job = HadoopJob.buildJob(
                 CapitalWordCount.class,
                 inputDirectory,     // data on hdfs
-                "/homes/slewis/jobs",      // jar location
-                RemoteUtilities.getDefaultPath() + "/output"             // output location - will have outputN added
+                defaultPath + "/jobs",      // jar location
+                defaultPath + "/output"             // output location - will have outputN added
 
         );
 
@@ -152,11 +154,12 @@ public class RemoteSession implements UserInfo {
     private static boolean runSubstringCount(final IHadoopController pHc) {
         //   pHc.guaranteeFilesOnHDFS(new File("E:/data/Moby"), "/user/slewis/moby", "/user/slewis/moby");
         String temporaryDirectory = pHc.getTemporaryDirectory();
+        final String defaultPath = RemoteUtilities.getDefaultPath();
         IHadoopJob job = HadoopJob.buildJob(
                 SubstringCount.class,
                 "/user/howdah" + "/BigText.txt",     // data on hdfs
-                "/users/slewis/jobs",      // jar location
-                temporaryDirectory           // output location - will have outputN added
+                defaultPath + "/jobs",      // jar location
+                  temporaryDirectory           // output location - will have outputN added
 
         );
 
@@ -359,6 +362,8 @@ public class RemoteSession implements UserInfo {
         final String user = RemoteUtilities.getUser(); // "training";  //
         final String password = RemoteUtilities.getPassword(); // "training";  //
         final String host = RemoteUtilities.getHost(); // "192.168.244.128"; // "hadoop1";
+        RemoteUtilities.setDefaultPath("/user/slewis/ebi");
+        final String defaultPath = RemoteUtilities.getDefaultPath();
 
         if (HadoopMajorVersion.CURRENT_VERSION != HadoopMajorVersion.Version0)
             throw new IllegalStateException("Version 0 is required for this code");
@@ -368,6 +373,11 @@ public class RemoteSession implements UserInfo {
 
         final RemoteHadoopController hc = new RemoteHadoopController(rs);
 
+        HadoopJob.setHadoopCommand("/hadoop/local-install/bin/hadoop");
+        /*
+           This expects to run from a directory containing a subdirectory moby
+           and assumes that the same structure exists on hdfs
+         */
         runWordCount(hc);
         rs.setConnected(false);
         System.err.println("Done");

@@ -47,19 +47,19 @@ public class HDFSAccessor implements IHDFSFileSystem {
 
     public static IHDFSFileSystem getFileSystem(Configuration config) {
         if (HadoopMajorVersion.CURRENT_VERSION != HadoopMajorVersion.Version0 && HDFSAccessor.isHDFSHasSecurity()) {
-             try {
-                 Class<? extends IHDFSFileSystem> cls = (Class<? extends IHDFSFileSystem>) Class.forName("org.systemsbiology.hadoop.HDFWithNameAccessor");
+            try {
+                Class<? extends IHDFSFileSystem> cls = (Class<? extends IHDFSFileSystem>) Class.forName("org.systemsbiology.hadoop.HDFWithNameAccessor");
 
-                 Class[] argType = {Configuration.class };
-                 Constructor<? extends IHDFSFileSystem> constructor = cls.getDeclaredConstructor(argType);
-                 IHDFSFileSystem ret = constructor.newInstance(config);
-                 return ret;
-             } catch (Exception e) {
-                 throw new RuntimeException(e);
-             }
-         } else {
-             return new HDFSAccessor(config);
-         }
+                Class[] argType = {Configuration.class};
+                Constructor<? extends IHDFSFileSystem> constructor = cls.getDeclaredConstructor(argType);
+                IHDFSFileSystem ret = constructor.newInstance(config);
+                return ret;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return new HDFSAccessor(config);
+        }
 
 
     }
@@ -70,7 +70,7 @@ public class HDFSAccessor implements IHDFSFileSystem {
                 Class<? extends IHDFSFileSystem> cls = (Class<? extends IHDFSFileSystem>) Class.forName("org.systemsbiology.hadoop.HDFWithNameAccessor");
 
                 Class[] argType = {String.class, int.class};
-                   Constructor<? extends IHDFSFileSystem> constructor = cls.getDeclaredConstructor(argType);
+                Constructor<? extends IHDFSFileSystem> constructor = cls.getDeclaredConstructor(argType);
                 IHDFSFileSystem ret = constructor.newInstance(host, new Integer(port));
                 return ret;
             } catch (Exception e) {
@@ -78,7 +78,7 @@ public class HDFSAccessor implements IHDFSFileSystem {
                 throw new RuntimeException(e);
             }
         } else {
-            return new HDFSAccessor(host,   port);
+            return new HDFSAccessor(host, port);
         }
 
     }
@@ -135,7 +135,7 @@ public class HDFSAccessor implements IHDFSFileSystem {
      */
     @Override
     public boolean isLocal() {
-        if(m_DFS instanceof org.apache.hadoop.fs.LocalFileSystem)
+        if (m_DFS instanceof org.apache.hadoop.fs.LocalFileSystem)
             return true;
 
         return false;
@@ -168,8 +168,8 @@ public class HDFSAccessor implements IHDFSFileSystem {
             Configuration config = new Configuration();
             config.set("fs.default.name", "hdfs://" + host + ":" + port + userDir);
             config.set("fs.defaultFS", "hdfs://" + host + ":" + port + userDir);
-              m_DFS = FileSystem.get(config);
-            if(isLocal())
+            m_DFS = FileSystem.get(config);
+            if (isLocal())
                 throw new IllegalStateException("HDFS should not be local");
         } catch (IOException e) {
             throw new RuntimeException("Failed to connect on " + connectString + " because " + e.getMessage() +
@@ -221,10 +221,13 @@ public class HDFSAccessor implements IHDFSFileSystem {
     public void writeToFileSystem(String hdfsPath, File localPath) {
         final FileSystem fileSystem = getDFS();
         Path dst = new Path(hdfsPath);
-
-        Path src = new Path(localPath.getAbsolutePath());
-
         try {
+            final Path parent = dst.getParent();
+            if (!fileSystem.exists(parent))
+                fileSystem.mkdirs(parent);
+
+            Path src = new Path(localPath.getAbsolutePath());
+
             fileSystem.copyFromLocalFile(src, dst);
         } catch (IOException e) {
             throw new RuntimeException(e);
