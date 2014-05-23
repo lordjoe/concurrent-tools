@@ -37,21 +37,25 @@ public class HDFSTests {
 
 
     public static final String VERSION2_HOST = "hadoop-master-01.ebi.ac.uk";
+     public static final int VERSION2_PORT = 8020;
 
-    public static final int VERSION2_PORT = 8020;
+    public static final String VERSION1_HOST = "hadoop-master-03.ebi.ac.uk";
+      public static final int VERSION1_PORT = 54310;
 
     @Before
     public void setVersion2()
     {
-        RemoteUtilities.setHost(VERSION2_HOST);
-        RemoteUtilities.setPort(VERSION2_PORT);
+   //     RemoteUtilities.setHost(VERSION2_HOST);
+    //    RemoteUtilities.setPort(VERSION2_PORT);
+        RemoteUtilities.setHost(VERSION1_HOST);
+        RemoteUtilities.setPort(VERSION1_PORT);
 
     }
 
     @Test
     public void versionTest() {
         HadoopMajorVersion mv = HadoopMajorVersion.CURRENT_VERSION;
-        Assert.assertEquals(HadoopMajorVersion.Version2, mv);
+        Assert.assertEquals(HadoopMajorVersion.Version0, mv);
     }
 
     public static boolean isHDFSAccessible() {

@@ -237,6 +237,6 @@ public class CapitalWordCount  extends Configured implements Tool {
 
 
     public static void main(String[] args) throws Exception {
-        ToolRunner.run(new CapitalWordCount(), args);
+       ToolRunner.run(new CapitalWordCount(), args);
     }
 }
