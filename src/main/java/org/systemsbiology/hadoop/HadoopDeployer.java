@@ -19,13 +19,14 @@ public class HadoopDeployer {
     public static final String[] EXCLUDED_JARS_PREFIXES = {
             //          core-3.1.1.jar,\
             "hadoop-",
-            "commons-logging-",
-      //      "commons-lang-",
+            //     "commons-logging-",
+            //      "commons-lang-",
             "commons-codec-",
             "commons-httpclient-",
             "commons-net-",
+            "janino",
             "avro-",
-            "jackson-",
+              "jackson-",
             "hsqldb-",
             "ftpserver-",
             "ftplet-",
@@ -37,8 +38,9 @@ public class HadoopDeployer {
             "xmlenc-",
             "paranamer-",
             "qdox-",
+            "junit-",
             "jetty-",
-            "jsp-",
+             "jsp-",
             "jasper-",
             "jetty-",
             "jets3t-",
@@ -52,13 +54,13 @@ public class HadoopDeployer {
             "jetty-",
             "snappy",
             "servlet",
-    //      "google",
+             "google-",
             "jfreechart",
             "core",
             "gdata",
             "netty",
-     //       "guava",
-     //       "protobuf",
+            //       "guava",
+            //       "protobuf",
             "jaxb",
             "jettison",
             "jsr305",
@@ -75,8 +77,8 @@ public class HadoopDeployer {
             "charsets.jar",
             "classes.jar",
             "jconsole.jar",
-            "slf4j-api-1.4.3.jar",
-            "slf4j-log4j12-1.4.3.jar",
+            //       "slf4j-api-1.4.3.jar",
+            //       "slf4j-log4j12-1.4.3.jar",
             "jsse.jar",
             "laf.jar",
             "ui.jar",
@@ -88,7 +90,6 @@ public class HadoopDeployer {
             //    "commons-logging-1.1.1.jar",
             //     "commons-cli-1.2.jar",
             //     "commons-logging-1.1.1.jar",
-            "slf4j-log4j12-1.4.3.jar",
             "log4j-1.2.15.jar",
             //  "xmlenc-0.52.jar",           //
             //    "commons-cli-1.2.jar",          //
@@ -159,15 +160,15 @@ public class HadoopDeployer {
         for (int i = 0; i < pathItems.length; i++) {
             String item = pathItems[i];
             String jarName = new File(item).getName();
-            if(jarName.contains("guava"))
-                 jarName = new File(item).getName();
+            if (jarName.contains("guava"))
+                jarName = new File(item).getName();
             if (".".equals(item))
+                continue;
+            if (item.contains(javaHome))
                 continue;
             if (EXCLUDED_JARS.contains(item))
                 continue;
             if (EXCLUDED_JARS.contains(jarName))
-                continue;
-            if (item.contains(javaHome))
                 continue;
             File itemFile = new File(item);
             if (!itemFile.exists())
@@ -185,7 +186,7 @@ public class HadoopDeployer {
             String item = pathItems[i];
             File itemFile = new File(item);
             String jarName = itemFile.getName();
-            if(jarName.contains("guava"))
+            if (jarName.contains("guava"))
                 jarName = itemFile.getName(); // break here
 
             if (".".equals(item))
@@ -263,7 +264,7 @@ public class HadoopDeployer {
     public static final String GLOBAL_DIR = "E:\\ThirdParty";
 
     public static File[] filterClassPathDirectories(String[] pathItems, String javaHome) {
-        List<File> holder = new ArrayList<File> ();
+        List<File> holder = new ArrayList<File>();
         //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < pathItems.length; i++) {
             String item = pathItems[i];
@@ -342,7 +343,7 @@ public class HadoopDeployer {
      * @param dst destination file name
      * @param src source file name
      * @return true for success
-     *         }
+     * }
      * @name copyFile
      * @function copy file named src into new file named dst
      */
@@ -380,7 +381,7 @@ public class HadoopDeployer {
      * @param TheFile name of file to create
      * @param data    date to write
      * @return true = success
-     *         }
+     * }
      * @name writeFile
      * @function write the string data to the file Filename
      */
@@ -434,7 +435,7 @@ public class HadoopDeployer {
             //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < pathDirectories.length; i++) {
                 File pathDirectory = pathDirectories[i];
-                copyLibraryDirectory("", pathDirectory, out,existing);
+                copyLibraryDirectory("", pathDirectory, out, existing);
             }
             out.flush();
             out.close();
@@ -476,7 +477,7 @@ public class HadoopDeployer {
             for (int i = 0; i < loadedPackages.length; i++) {
                 String replace = loadedPackages[i].replace(".", "/");
                 holder.add(replace);
-          }
+            }
 
             //           ignore libraries
 //            copyLibraries(out, pathLibs);
@@ -501,7 +502,7 @@ public class HadoopDeployer {
         return s + "/" + name;
     }
 
-    private static void copyLibraryDirectory(final String s, final File dir, final ZipOutputStream pOut,Set<String> existing) throws IOException {
+    private static void copyLibraryDirectory(final String s, final File dir, final ZipOutputStream pOut, Set<String> existing) throws IOException {
         File[] list = dir.listFiles();
         if (list == null) return;
         //noinspection ForLoopReplaceableByForEach
@@ -509,7 +510,7 @@ public class HadoopDeployer {
             File file = list[i];
             if (file.isDirectory()) {
                 final String np = nextPath(s, file.getName());
-                copyLibraryDirectory(np, file, pOut,existing);
+                copyLibraryDirectory(np, file, pOut, existing);
             } else {
                 final String np = nextPath(s, file.getName());
                 // prevent duplicates
@@ -519,8 +520,7 @@ public class HadoopDeployer {
                     copyFile(file, pOut);
                     pOut.closeEntry();
                     existing.add(np);
-                }
-                else {
+                } else {
                     System.out.println(np);
                 }
             }
@@ -558,7 +558,7 @@ public class HadoopDeployer {
 //        } else {
 //            if(!deployDir.isDirectory())
 //                throw new IllegalArgumentException("deploy directory  " + pJarName + " is not a directory");
- //       }
+        //       }
         deployLibrariesToJar(deployDir);
         return deployDir;
     }

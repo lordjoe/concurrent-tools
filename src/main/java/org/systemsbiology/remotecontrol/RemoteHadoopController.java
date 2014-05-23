@@ -119,7 +119,9 @@ public class RemoteHadoopController implements IHadoopController {
 
         // in higher versions we need to run on a server
         boolean runningVersion0 = HadoopMajorVersion.CURRENT_VERSION == HadoopMajorVersion.Version0;
-        if (!runningVersion0)
+        runningVersion0 = false; // force 1.0 behavior
+        String destFile = "jobs/" + jar.getName();
+        if ( !runningVersion0)
             guaranteeFileOnHost(jar, jarFile);
 
         //      guaranteeFiles(inputs, job.getFilesDirectory());
@@ -140,10 +142,10 @@ public class RemoteHadoopController implements IHadoopController {
         job.setOutputDirectory(emptyOutputDirectory);
         hdfsAccessor.expunge(emptyOutputDirectory);
 
+        String command = job.buildCommandString();
         runningVersion0 = true; // todo take out
         //noinspection ConstantConditions
-        if (!runningVersion0) {
-            String command = job.buildCommandString();
+        if (true || !runningVersion0) {
             String chmodCommand = job.buildChmodCommandString();
             System.out.println(command);
             //noinspection UnusedDeclaration
@@ -400,8 +402,8 @@ public class RemoteHadoopController implements IHadoopController {
     }
 
     public boolean guaranteeFileOnHost(final File pJar, String dest) {
-        IFileSystem fs = getFTPAccessor();
-        if (fs.exists(dest))
+          IFileSystem fs = getFTPAccessor();
+          if (fs.exists(dest))
             return true;
         fs.writeToFileSystem(dest, pJar);
         return true;

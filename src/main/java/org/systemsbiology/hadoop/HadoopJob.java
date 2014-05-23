@@ -14,7 +14,6 @@ import java.util.*;
  * Date: Jun 7, 2010
  */
 public class HadoopJob implements IHadoopJob {
-    public static final HadoopJob[] EMPTY_ARRAY = {};
 
     private static String gHadoopCommand = RemoteHadoopController.HADOOP_COMMAND;
 
