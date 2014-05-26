@@ -119,7 +119,7 @@ public class RemoteHadoopController implements IHadoopController {
 
         // in higher versions we need to run on a server
         boolean runningVersion0 = HadoopMajorVersion.CURRENT_VERSION == HadoopMajorVersion.Version0;
-        runningVersion0 = false; // force 1.0 behavior
+    //    runningVersion0 = false; // force 1.0 behavior
         String destFile = "jobs/" + jar.getName();
         if ( !runningVersion0)
             guaranteeFileOnHost(jar, jarFile);
@@ -145,7 +145,7 @@ public class RemoteHadoopController implements IHadoopController {
         String command = job.buildCommandString();
         runningVersion0 = true; // todo take out
         //noinspection ConstantConditions
-        if (true || !runningVersion0) {
+        if (  !runningVersion0) {
             String chmodCommand = job.buildChmodCommandString();
             System.out.println(command);
             //noinspection UnusedDeclaration

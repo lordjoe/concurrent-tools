@@ -125,76 +125,6 @@ public class NShotTest extends ConfiguredJobRunner implements IJobRunner {
 
     }
 
-    /**
-     * { method
-     *
-     * @param DirectoryName <Add Comment Here>
-     *                      }
-     * @name expungeDirectory
-     * @function delete a directory and all its contents
-     */
-    public static void expungeDirectory(String DirectoryName) {
-        expungeDirectory(new File(DirectoryName));
-    }
-
-    /**
-     * { method
-     *
-     * @param TheDir <Add Comment Here>
-     *               }
-     * @name expungeDirectory
-     * @function delete a directory and all its contents
-     */
-    public static void expungeDirectory(File TheDir) {
-        if (TheDir.exists()) {
-            expungeDirectoryContents(TheDir);
-            TheDir.delete();
-        }
-
-    }
-
-    /**
-     * { method
-     *
-     * @param DirectoryName <Add Comment Here>
-     *                      }
-     * @name expungeDirectory
-     * @function delete a directory and all its contents
-     */
-    public static void expungeDirectoryContents(File TheDir) {
-        String[] items = TheDir.list();
-        for (int i = 0; i < items.length; i++) {
-            File Test = new File(TheDir, items[i]);
-            if (Test.isFile()) {
-                Test.delete();
-            } else {
-                expungeDirectory(Test);
-            }
-        }
-
-    }
-
-    private static void expungeDirectory(final FileSystem fs, final Path src) {
-        try {
-            if (!fs.exists(src))
-                return;
-            // break these out
-            if (fs.getFileStatus(src).isDir()) {
-                boolean doneOK = fs.delete(src, true);
-                doneOK = !fs.exists(src);
-                return;
-            }
-            if (fs.isFile(src)) {
-                boolean doneOK = fs.delete(src, false);
-                return;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-
-        }
-
-    }
-
     public static final int NUMBER_KEYS = 1000 * 1000 * 30;
     public static final int NUMBER_SPLITS = 10;
 
@@ -243,12 +173,11 @@ public class NShotTest extends ConfiguredJobRunner implements IJobRunner {
         if (otherArgs.length > 0)
             athString = otherArgs[otherArgs.length - 1];
         File out = new File(athString);
-        if (out.exists()) {
-            expungeDirectory(out);
-            out.delete();
-        }
 
         Path outputDir = new Path(athString);
+
+        FileSystem fileSystem = outputDir.getFileSystem(conf);
+        HadoopUtilities.expunge(outputDir, fileSystem);    // make sure thia does not exist
 
 
         FileOutputFormat.setOutputPath(job, outputDir);

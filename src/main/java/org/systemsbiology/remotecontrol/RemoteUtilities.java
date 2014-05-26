@@ -1,6 +1,7 @@
 package org.systemsbiology.remotecontrol;
 
 import com.lordjoe.utilities.*;
+import org.apache.log4j.lf5.util.*;
 import org.systemsbiology.hadoop.*;
 
 import java.io.*;
@@ -37,6 +38,50 @@ public class RemoteUtilities {
     public static final String DEFAULT_PATH_STRING = "default_path";
 
     //   private static Properties gAccessProperties;
+    private static boolean gResourcePropertiesRead = false;
+
+    public static void readResourceProperties() {
+        if (gResourcePropertiesRead)
+            return;
+        gResourcePropertiesRead = true; // only do this once
+        InputStream is = RemoteUtilities.class.getResourceAsStream("ResourceSettings.properties");
+        if (is == null) {
+            try {
+                is = new FileInputStream("RemoteSettings.properties");
+            } catch (FileNotFoundException e) {
+                System.err.println("Cannot find ResourceSettings.properties");
+                return;
+            }
+        }
+        Properties props = new Properties();
+        try {
+            props.load(is);
+        } catch (IOException e) {
+            System.err.println("Cannot load ResourceSettings.properties");
+            return;
+        }
+        String prop;
+        prop = props.getProperty("user");
+        if (prop != null)
+            setUser(prop.trim());
+        prop = props.getProperty("host");
+        if (prop != null)
+            setHost(prop.trim());
+        prop = props.getProperty("jobtracker");
+        if (prop != null)
+            setJobTracker(prop.trim());
+        prop = props.getProperty("port");
+        if (prop != null)
+            setPort(Integer.parseInt(prop.trim()));
+        prop = props.getProperty("path");
+        if (prop != null)
+            setDefaultPath(prop.trim());
+        prop = props.getProperty("encryptedRemotePassword");
+        if (prop != null)
+            setPassword(Encrypt.decryptString(prop.trim()));
+    }
+
+
 
 
     private static void validateProperties(final Properties pP) {
@@ -84,7 +129,7 @@ public class RemoteUtilities {
         return s;
     }
 
-    private static String g_User;
+private static String g_User;
 
     public static String getUser() {
         if (g_User == null)
@@ -93,10 +138,10 @@ public class RemoteUtilities {
     }
 
     public static void setUser(String user) {
-          g_User = user;
+        g_User = user;
     }
 
-    public static final File KEYTAB_DIR = new File("/keytabs");
+public static final File KEYTAB_DIR = new File("/keytabs");
 
     /**
      * look for a keytab file with Kerboros keys
@@ -118,7 +163,7 @@ public class RemoteUtilities {
         return null;
     }
 
-    private static String g_Password;
+private static String g_Password;
 
     public static String getPassword() {
         if (g_Password == null) {
@@ -133,7 +178,7 @@ public class RemoteUtilities {
         g_Password = password;
     }
 
-    private static String g_Host;
+private static String g_Host;
 
     public static String getHost() {
         if (g_Host == null)
@@ -145,7 +190,7 @@ public class RemoteUtilities {
         g_Host = host;
     }
 
-    private static String g_JobTracker;
+private static String g_JobTracker;
 
     public static String getJobTracker() {
         if (g_JobTracker == null)
@@ -155,11 +200,11 @@ public class RemoteUtilities {
 
 
     public static void setJobTracker(String jobTracker) {
-         g_JobTracker = jobTracker;
+        g_JobTracker = jobTracker;
     }
 
 
-    private static Integer g_Port;
+private static Integer g_Port;
 
     public static int getPort() {
         if (g_Port == null) {
@@ -176,7 +221,7 @@ public class RemoteUtilities {
         g_Port = port;
     }
 
-    private static String g_DefaultPath;
+private static String g_DefaultPath;
 
     public static String getDefaultPath() {
         if (g_DefaultPath == null)
@@ -188,52 +233,52 @@ public class RemoteUtilities {
         g_DefaultPath = defaultPath;
     }
 
-    public static final String[] EEXCLUDED_JARS_LIST = {
-            "idea_rt.jar",
-            "javaws.jar",
-            "jce.jar",
-            "hadoop-0.20.1+152-mrunit",
-            "management-agent.jar",
-            "alt-rt.jar",
-            "charsets.jar",
-            "classes.jar",
-            "jconsole.jar",
-            "slf4j-api-1.4.3.jar",
-            "slf4j-log4j12-1.4.3.jar",
-            "jsse.jar",
-            "laf.jar",
-            "ui.jar",
-            "testng-5.5-jdk15.jar",
-            "junit-dep-4.8.1.jar",
-            "hadoop-0.20.2-core.jar",
-            "hadoop-0.20.1+152-mrunit.jar",
-            "hadoop-0.20.2-tools.jar",
-            "hadoop-core-0.20.1.jar",
-            "commons-logging-1.1.1.jar",
-            "commons-cli-1.2.jar",
-            //     "commons-logging-1.1.1.jar",
-            "slf4j-log4j12-1.4.3.jar",
-            "log4j-1.2.15.jar",
-            //  "xmlenc-0.52.jar",           //
-            //    "commons-cli-1.2.jar",          //
-            //    "commons-logging-api-1.0.4.jar",
-            //    "commons-httpclient-3.0.1.jar",    //
-            //    "commons-net-1.4.1.jar",           //
-            //    "slf4j-api-1.4.3.jar",
-            "karmasphere-client.jar",
-            "servlet-api-2.5-6.1.14.jar",
-            //    "commons-codec-1.3.jar",     //
-            "commons-el-1.0.jar",
-            // //   "commons-io-1.4.jar",
-            //    "aws-java-sdk-1.0.005.jar",    // leave off
-            "junit-4.4.jar",
-            "junit-4.8.1.jar"
-    };
+public static final String[] EEXCLUDED_JARS_LIST = {
+        "idea_rt.jar",
+        "javaws.jar",
+        "jce.jar",
+        "hadoop-0.20.1+152-mrunit",
+        "management-agent.jar",
+        "alt-rt.jar",
+        "charsets.jar",
+        "classes.jar",
+        "jconsole.jar",
+        "slf4j-api-1.4.3.jar",
+        "slf4j-log4j12-1.4.3.jar",
+        "jsse.jar",
+        "laf.jar",
+        "ui.jar",
+        "testng-5.5-jdk15.jar",
+        "junit-dep-4.8.1.jar",
+        "hadoop-0.20.2-core.jar",
+        "hadoop-0.20.1+152-mrunit.jar",
+        "hadoop-0.20.2-tools.jar",
+        "hadoop-core-0.20.1.jar",
+        "commons-logging-1.1.1.jar",
+        "commons-cli-1.2.jar",
+        //     "commons-logging-1.1.1.jar",
+        "slf4j-log4j12-1.4.3.jar",
+        "log4j-1.2.15.jar",
+        //  "xmlenc-0.52.jar",           //
+        //    "commons-cli-1.2.jar",          //
+        //    "commons-logging-api-1.0.4.jar",
+        //    "commons-httpclient-3.0.1.jar",    //
+        //    "commons-net-1.4.1.jar",           //
+        //    "slf4j-api-1.4.3.jar",
+        "karmasphere-client.jar",
+        "servlet-api-2.5-6.1.14.jar",
+        //    "commons-codec-1.3.jar",     //
+        "commons-el-1.0.jar",
+        // //   "commons-io-1.4.jar",
+        //    "aws-java-sdk-1.0.005.jar",    // leave off
+        "junit-4.4.jar",
+        "junit-4.8.1.jar"
+};
 
-    public static final Set<String> EXCLUDED_JARS = new HashSet(Arrays.asList(EEXCLUDED_JARS_LIST));
+public static final Set<String> EXCLUDED_JARS = new HashSet(Arrays.asList(EEXCLUDED_JARS_LIST));
 
-    private int gJarNumber = 0;
-    private static boolean isQuiet;
+private int gJarNumber = 0;
+private static boolean isQuiet;
 
     public static File[] filterClassPath(String[] pathItems, String javaHome) {
         List holder = new ArrayList();
@@ -354,16 +399,16 @@ public class RemoteUtilities {
     }
 
 
-    public static final String TEST_CONTENT =
-            "Mary had a little lamb,\n" +
-                    "little lamb, little lamb,\n" +
-                    "Mary had a little lamb,\n" +
-                    "whose fleece was white as snow.\n" +
-                    "And everywhere that Mary went,\n" +
-                    "Mary went, Mary went,\n" +
-                    "and everywhere that Mary went,\n" +
-                    "the lamb was sure to go.";
-    public static final String FILE_NAME = "little_lamb.txt";
+public static final String TEST_CONTENT =
+        "Mary had a little lamb,\n" +
+                "little lamb, little lamb,\n" +
+                "Mary had a little lamb,\n" +
+                "whose fleece was white as snow.\n" +
+                "And everywhere that Mary went,\n" +
+                "Mary went, Mary went,\n" +
+                "and everywhere that Mary went,\n" +
+                "the lamb was sure to go.";
+public static final String FILE_NAME = "little_lamb.txt";
 
 
     public static void hdfsReadTest() {

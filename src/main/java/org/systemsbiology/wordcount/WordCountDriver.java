@@ -7,6 +7,7 @@ import org.apache.hadoop.conf.*;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
+import org.systemsbiology.hadoop.*;
 
 public class WordCountDriver {
     public static final WordCountDriver[] EMPTY_ARRAY = {};
@@ -83,54 +84,6 @@ public class WordCountDriver {
         return -1;
     }
 
-    /**
-     * { method
-     *
-     * @param DirectoryName <Add Comment Here>
-     *                      }
-     * @name expungeDirectory
-     * @function delete a directory and all its contents
-     */
-    public static void expungeDirectory(String DirectoryName) {
-        expungeDirectory(new File(DirectoryName));
-    }
-
-    /**
-     * { method
-     *
-     * @param TheDir <Add Comment Here>
-     *               }
-     * @name expungeDirectory
-     * @function delete a directory and all its contents
-     */
-    public static void expungeDirectory(File TheDir) {
-        if (TheDir.exists()) {
-            expungeDirectoryContents(TheDir);
-            TheDir.delete();
-        }
-
-    }
-
-    /**
-     * { method
-     *
-     * @param DirectoryName <Add Comment Here>
-     *                      }
-     * @name expungeDirectory
-     * @function delete a directory and all its contents
-     */
-    public static void expungeDirectoryContents(File TheDir) {
-        String[] items = TheDir.list();
-        for (int i = 0; i < items.length; i++) {
-            File Test = new File(TheDir, items[i]);
-            if (Test.isFile()) {
-                Test.delete();
-            } else {
-                expungeDirectory(Test);
-            }
-        }
-
-    }
 
     /**
      * The main driver for word count map/reduce program.
@@ -182,9 +135,14 @@ public class WordCountDriver {
         }
         FileInputFormat.setInputPaths(conf, other_args.get(0));
         final String outStr = other_args.get(1);
-        expungeDirectory(outStr);
 
-        FileOutputFormat.setOutputPath(conf, new Path(outStr));
+        Path outputDir = new Path(outStr);
+
+        FileSystem fileSystem = outputDir.getFileSystem(conf);
+        HadoopUtilities.expunge(outputDir, fileSystem);    // make sure thia does not exist
+
+
+        FileOutputFormat.setOutputPath(conf, outputDir);
 
         JobClient.runJob(conf);
         return 0;

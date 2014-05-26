@@ -124,11 +124,10 @@ public class RemoteSession implements UserInfo {
         final String defaultPath = RemoteUtilities.getDefaultPath();
         //   pHc.guaranteeFilesOnHDFS(new File("E:/data/Moby"), "/user/slewis/moby", "/user/slewis/moby");
         IHadoopJob job = HadoopJob.buildJob(
-                CapitalWordCount.class,
+                NShotTest.class,
                 RemoteUtilities.getDefaultPath() + "/moby",     // data on hdfs
                 defaultPath + "/jobs",      // jar location
-                  RemoteUtilities.getDefaultPath()             // output location - will have outputN added
-
+                RemoteUtilities.getDefaultPath()             // output location - will have outputN added
         );
 
 
@@ -140,8 +139,9 @@ public class RemoteSession implements UserInfo {
         final String defaultPath = RemoteUtilities.getDefaultPath();
         String inputDirectory = defaultPath + "/books";
         IHadoopJob job = HadoopJob.buildJob(
-                CapitalWordCount.class,
-                inputDirectory,     // data on hdfs
+         //      CapitalWordCount.class,     // not n IJobRunner
+                CapitalWordCountRunner.class,
+                  inputDirectory,     // data on hdfs
                 defaultPath + "/jobs",      // jar location
                 defaultPath + "/output"             // output location - will have outputN added
 
@@ -159,7 +159,7 @@ public class RemoteSession implements UserInfo {
                 SubstringCount.class,
                 "/user/howdah" + "/BigText.txt",     // data on hdfs
                 defaultPath + "/jobs",      // jar location
-                  temporaryDirectory           // output location - will have outputN added
+                temporaryDirectory           // output location - will have outputN added
 
         );
 
@@ -359,6 +359,9 @@ public class RemoteSession implements UserInfo {
 //    }
 
     public static void main(String[] args) throws Exception {
+
+        RemoteUtilities.readResourceProperties();
+
         final String user = RemoteUtilities.getUser(); // "training";  //
         final String password = RemoteUtilities.getPassword(); // "training";  //
         final String host = RemoteUtilities.getHost(); // "192.168.244.128"; // "hadoop1";
@@ -375,10 +378,17 @@ public class RemoteSession implements UserInfo {
 
         HadoopJob.setHadoopCommand("/hadoop/local-install/bin/hadoop");
         /*
-           This expects to run from a directory containing a subdirectory moby
-           and assumes that the same structure exists on hdfs
+           This expects nothing and does not read the input
          */
-        runWordCount(hc);
+//       runNShot(hc);
+
+//     /*
+//           This expects to run from a directory containing a subdirectory moby
+//           and assumes that the same structure exists on hdfs
+//         */
+       runWordCount(hc);
+
+
         rs.setConnected(false);
         System.err.println("Done");
 
