@@ -551,6 +551,7 @@ public class HadoopDeployer {
 
 
     public static File makeHadoopJar(final String pJarName) {
+        System.out.println("Making Jar file " + pJarName);
         File deployDir = new File(pJarName);
         // I think this is WRONG todo remove
 //        if(!deployDir.exists()) {

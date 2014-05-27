@@ -390,7 +390,8 @@ public class HadoopJob implements IHadoopJob {
     public String buildCommandString() {
         makeJarAsNeeded();
         StringBuilder sb = new StringBuilder();
-        sb.append(getHadoopCommend());
+        final String hadoopCommend = getHadoopCommend();
+        sb.append(hadoopCommend);
 
 
         String jarFile = getJarFile();
@@ -401,7 +402,7 @@ public class HadoopJob implements IHadoopJob {
         sb.append("  " + getMainClass());
 
         // add a dummy argument
-        sb.append(" -D org.systemsbiology.status=foobar ");
+       // sb.append(" -D org.systemsbiology.status=foobar ");
 
         String[] others = getAllArgs();
         if (others != null) {

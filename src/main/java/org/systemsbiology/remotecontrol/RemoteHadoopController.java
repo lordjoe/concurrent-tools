@@ -118,7 +118,8 @@ public class RemoteHadoopController implements IHadoopController {
             throw new IllegalStateException("Jar file " + jar + " does not exist");
 
         // in higher versions we need to run on a server
-        boolean runningVersion0 = HadoopMajorVersion.CURRENT_VERSION == HadoopMajorVersion.Version0;
+        final HadoopMajorVersion current_version = HadoopMajorVersion.CURRENT_VERSION;
+        boolean runningVersion0 = current_version == HadoopMajorVersion.Version0;
     //    runningVersion0 = false; // force 1.0 behavior
         String destFile = "jobs/" + jar.getName();
         if ( !runningVersion0)
@@ -143,8 +144,8 @@ public class RemoteHadoopController implements IHadoopController {
         hdfsAccessor.expunge(emptyOutputDirectory);
 
         String command = job.buildCommandString();
-        runningVersion0 = true; // todo take out
-        //noinspection ConstantConditions
+        System.out.printf(command);
+         //noinspection ConstantConditions
         if (  !runningVersion0) {
             String chmodCommand = job.buildChmodCommandString();
             System.out.println(command);

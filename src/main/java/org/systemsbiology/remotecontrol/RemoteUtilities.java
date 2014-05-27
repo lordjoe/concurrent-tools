@@ -230,6 +230,7 @@ private static String g_DefaultPath;
     }
 
     public static void setDefaultPath(String defaultPath) {
+        String oldPath = getDefaultPath();
         g_DefaultPath = defaultPath;
     }
 
