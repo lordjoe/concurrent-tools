@@ -4,6 +4,7 @@ import com.lordjoe.utilities.*;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.*;
+import org.apache.hadoop.fs.permission.*;
 import org.systemsbiology.remotecontrol.*;
 
 import java.io.*;
@@ -18,8 +19,7 @@ import java.util.*;
  * @date Nov 15, 2010
  */
 public class HDFSAccessor implements IHDFSFileSystem {
-    public static HDFSAccessor[] EMPTY_ARRAY = {};
-    public static Class THIS_CLASS = HDFSAccessor.class;
+    FsPermission FULL_PERMISSION = FsPermission.valueOf("rwx");
 
     /**
      * Note the use of reflection will cause things work even under 0.2 when  HDFSAsUserAccessor
@@ -223,12 +223,15 @@ public class HDFSAccessor implements IHDFSFileSystem {
         Path dst = new Path(hdfsPath);
         try {
             final Path parent = dst.getParent();
-            if (!fileSystem.exists(parent))
+            if (!fileSystem.exists(parent)) {
                 fileSystem.mkdirs(parent);
+                fileSystem.setPermission(parent,FULL_ACCESS);
+            }
 
             Path src = new Path(localPath.getAbsolutePath());
 
             fileSystem.copyFromLocalFile(src, dst);
+            fileSystem.setPermission(src,FULL_ACCESS);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -401,7 +404,7 @@ public class HDFSAccessor implements IHDFSFileSystem {
             if (fs.exists(src))
                 return;
             this.writeToFileSystem(hdfsPath, file);
-        } catch (IOException e) {
+         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

@@ -10,8 +10,6 @@ import java.io.*;
  */
 public interface IStreamOpener
 {
-    public static IStreamOpener[] EMPTY_ARRAY = {};
-    public static Class THIS_CLASS = IStreamOpener.class;
 
     /**
      * open a file from a string

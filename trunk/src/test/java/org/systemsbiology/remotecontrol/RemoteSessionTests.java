@@ -97,7 +97,7 @@ public class RemoteSessionTests {
             //noinspection UnusedDeclaration
             boolean ret = hc.runJob(job);
         } catch (Exception e) {
-            // throw new RuntimeException(e);  // todo run the test
+            throw new RuntimeException(e);  // todo run the test
 
         }
     }
