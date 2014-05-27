@@ -15,7 +15,6 @@ import java.io.*;
  * Date: 3/9/11
  */
 public class HDFSTests {
-    public static final HDFSTests[] EMPTY_ARRAY = {};
 
     //    public static final String NAME_NODE = RemoteUtilities.getHost();
     //   public static final int HDFS_PORT = RemoteUtilities.getPort();
@@ -39,10 +38,11 @@ public class HDFSTests {
     public static final String VERSION2_HOST = "hadoop-master-01.ebi.ac.uk";
      public static final int VERSION2_PORT = 8020;
 
-    public static final String VERSION1_HOST = "hadoop-master-03.ebi.ac.uk";
-      public static final int VERSION1_PORT = 54310;
+     public static final String VERSION1_HOST = "hadoop-master-03.ebi.ac.uk";
 
-    @Before
+     public static final int VERSION1_PORT = 54310;
+
+//    @Before
     public void setVersion2()
     {
    //     RemoteUtilities.setHost(VERSION2_HOST);
