@@ -19,7 +19,7 @@ import java.util.*;
  * @date Nov 15, 2010
  */
 public class HDFSAccessor implements IHDFSFileSystem {
-    FsPermission FULL_PERMISSION = FsPermission.valueOf("rwx");
+   // FsPermission FULL_PERMISSION = new FsPermission((short)0777);
 
     /**
      * Note the use of reflection will cause things work even under 0.2 when  HDFSAsUserAccessor
