@@ -33,6 +33,8 @@ public class ParseFiltersTest {
 
     @Test
     public void testParseFilters() {
+
+        System.out.println(FILTER_1);
          final TypedFilterCollection typedFilterCollection = TypedFilterCollection.parse(FILTER_1 );
 
 
