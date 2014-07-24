@@ -3,7 +3,7 @@ package com.lordjoe.algorithms;
 import java.util.*;
 
 /**
- * map items to counts of their occurrances
+ * map items to counts of their ocurrances
  *
  * @param <T>
  */
@@ -62,6 +62,20 @@ public class CountedMap<T> {
                 sum++;
         }
         return sum;
+    }
+
+    /**
+     * return all keys with a count more than n
+     * @param n
+     * @return
+     */
+    public List<T> getItemsMoreThanN(int n) {
+        List<T> ret = (List<T>)new ArrayList();
+        for (T t : items.keySet()) {
+             if(items.get(t) > n)
+                 ret.add(t);
+        }
+        return ret;
     }
 
     public int getDuplicates() {

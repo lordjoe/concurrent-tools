@@ -11,6 +11,16 @@ import java.util.*;
  */
 public class CountedString implements Comparable<CountedString> {
 
+    /**
+     * return an array of CountedString  sorted to by occurance count then
+     * alphabetically
+     *
+     * @param lst !null list of strings - no nulls duplicates OK
+     * @return
+     */
+    public static CountedString[] getCountedStrings(String[] lst) {
+        return getCountedStrings(Arrays.asList(lst));
+    }
 
     /**
      * return an array of CountedString  sorted to by occurance count then
@@ -58,7 +68,7 @@ public class CountedString implements Comparable<CountedString> {
      * @param lst !null list of strings - no nulls duplicates OK
      * @return as above
      */
-    public static String[] getStringsByOccurance(String[] lst) {
+    public static String[] getStringsByOccuranceX(String[] lst) {
         return getStringsByOccurance(Arrays.asList(lst));
     }
 
@@ -69,10 +79,10 @@ public class CountedString implements Comparable<CountedString> {
      * @return as above
      */
     public static String[] getStringsByOccurance(List<String> lst) {
-        CountedString[] sortedByCOubt = getCountedStrings(lst);
-        String[] ret = new String[sortedByCOubt.length];
-        for (int i = 0; i < sortedByCOubt.length; i++) {
-            ret[i] = sortedByCOubt[i].getValue();
+        CountedString[] sortedByCount = getCountedStrings(lst);
+        String[] ret = new String[sortedByCount.length];
+        for (int i = 0; i < sortedByCount.length; i++) {
+            ret[i] = sortedByCount[i].getValue();
 
         }
         return ret;
