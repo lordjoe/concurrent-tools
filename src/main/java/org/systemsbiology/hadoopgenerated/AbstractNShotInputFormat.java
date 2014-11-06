@@ -25,7 +25,7 @@ public abstract class AbstractNShotInputFormat<K, V> extends InputFormat<K, V> {
     public static AbstractNShotInputFormat[] EMPTY_ARRAY = {};
     public static Class THIS_CLASS = AbstractNShotInputFormat.class;
 
-    private static int gNumberKeys = 20;
+    private static long gNumberKeys = 20;
     private static int gNumberSplits = 5;
 
     /**
@@ -33,11 +33,11 @@ public abstract class AbstractNShotInputFormat<K, V> extends InputFormat<K, V> {
      *
      * @return
      */
-    public static int getNumberKeys() {
+    public static long getNumberKeys() {
         return gNumberKeys;
     }
 
-    public static void setNumberKeys(int pNumberKeys) {
+    public static void setNumberKeys(long pNumberKeys) {
         gNumberKeys = pNumberKeys;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractNShotInputFormat<K, V> extends InputFormat<K, V> {
     protected abstract K getKeyFromIndex(long index);
 
     /**
-     * Implement to generate a ressomable key
+     * Implement to generate a reasonable key
      *
      * @param index current key index
      * @return non-null key

@@ -148,6 +148,21 @@ public interface IFileSystem {
      */
     public String readFromFileSystem(String hdfsPath);
 
+    /**
+       * open a stream from a file
+       * @param hdfsPath !null remote path to an existing file
+       * @return  input stream
+       */
+      public InputStream openPath(String hdfsPath);
+
+
+    /**
+       * open a stream to a file
+       * @param hdfsPath !null remote path to an existing file
+       * @return  input stream
+       */
+      public OutputStream openPathForWrite(String hdfsPath);
+
 
     /**
      * shut down all running sessions   on local file systems

@@ -18,7 +18,7 @@ import java.io.*;
    */
 
 
- public class ElapsedTimer   {
+ public class ElapsedTimer implements Serializable {
 
         private long m_Start;
 

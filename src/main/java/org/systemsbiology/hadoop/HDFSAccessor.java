@@ -2,9 +2,8 @@ package org.systemsbiology.hadoop;
 
 import com.lordjoe.utilities.*;
 import org.apache.hadoop.conf.*;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.*;
-import org.apache.hadoop.fs.permission.*;
+import org.apache.hadoop.fs.FileSystem;
 import org.systemsbiology.remotecontrol.*;
 
 import java.io.*;
@@ -468,7 +467,18 @@ public class HDFSAccessor implements IHDFSFileSystem {
     }
 
     public static boolean isFileNameLocal(final String hdfsPath) {
-        return hdfsPath.contains(":") && !hdfsPath.startsWith("s3n:") && !hdfsPath.startsWith("res:");
+        if(hdfsPath.startsWith("hdfs://"))
+            return false;
+        if(hdfsPath.startsWith("s3n://"))
+               return false;
+        if(hdfsPath.startsWith("res:"))
+               return false;
+        if(hdfsPath.contains(":") )
+                  return true;
+        if(hdfsPath.startsWith("/"))
+               return true;
+
+        return false;
     }
 
 
@@ -579,10 +589,33 @@ public class HDFSAccessor implements IHDFSFileSystem {
      */
     @Override
     public String readFromFileSystem(String hdfsPath) {
-        InputStream is = openFileForRead(new Path(hdfsPath));
+        InputStream is = openPath(hdfsPath);
         return FileUtilities.readInFile(is);
     }
 
+
+    /**
+     * read a remote file as text
+     *
+     * @param hdfsPath !null remote path to an existing file
+     * @return content as text
+     */
+    @Override
+    public InputStream openPath(String hdfsPath) {
+        InputStream is = openFileForRead(new Path(hdfsPath));
+        return is;
+    }
+
+    /**
+     * open a stream to a file
+     *
+     * @param hdfsPath !null remote path to an existing file
+     * @return input stream
+     */
+    @Override
+    public OutputStream openPathForWrite(final String hdfsPath) {
+        return  openFileForWrite(hdfsPath);
+     }
 
     public static void main(String[] args) {
         HDFSAccessor dfs = new HDFSAccessor("glados", 9000, "slewis");

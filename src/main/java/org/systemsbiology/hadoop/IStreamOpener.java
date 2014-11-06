@@ -8,7 +8,7 @@ import java.io.*;
  * @author Steve Lewis
  * @date Mar 8, 2011
  */
-public interface IStreamOpener
+public interface IStreamOpener extends Serializable
 {
 
     /**

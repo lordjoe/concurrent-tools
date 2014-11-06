@@ -72,6 +72,40 @@ public class LocalMachineFileSystem implements IFileSystem {
     }
 
     /**
+     * open a stream from a file
+     *
+     * @param hdfsPath !null remote path to an existing file
+     * @return input stream
+     */
+    @Override
+    public InputStream openPath(final String hdfsPath) {
+        File src = new File(hdfsPath);
+        try {
+            return  new FileInputStream(src);
+        }
+        catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * open a stream to a file
+     *
+     * @param hdfsPath !null remote path to an existing file
+     * @return input stream
+     */
+    @Override
+    public OutputStream openPathForWrite(final String hdfsPath) {
+        File src = new File(hdfsPath);
+        try {
+            return  new FileOutputStream(src);
+        }
+        catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+         }
+    }
+
+    /**
      * delete a directory and all enclosed files and directories
      *
      * @param hdfsPath !null path
