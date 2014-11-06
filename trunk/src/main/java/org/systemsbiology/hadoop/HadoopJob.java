@@ -1,7 +1,6 @@
 package org.systemsbiology.hadoop;
 
 import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.util.*;
 import org.systemsbiology.remotecontrol.*;
 
 import java.io.*;

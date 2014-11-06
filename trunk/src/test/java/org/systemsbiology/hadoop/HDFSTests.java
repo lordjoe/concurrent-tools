@@ -4,7 +4,6 @@ package org.systemsbiology.hadoop;
 import com.lordjoe.utilities.*;
 import org.junit.*;
 import org.systemsbiology.remotecontrol.*;
-import org.systemsbiology.xml.*;
 
 import java.io.*;
 
@@ -115,7 +114,7 @@ public class HDFSTests {
     //        // never get here
 
 
-    @Test
+  //  @Test
     public void HDFSReadTest() {
 
 

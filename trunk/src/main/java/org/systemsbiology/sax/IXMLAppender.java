@@ -1,11 +1,13 @@
 package org.systemsbiology.sax;
 
+import java.io.*;
+
 /**
  * org.systemsbiology.xtandem.sax.IXMLAppender
  * User: steven
  * Date: 4/20/11
  */
-public interface IXMLAppender {
+public interface IXMLAppender extends Serializable {
     public static final IXMLAppender[] EMPTY_ARRAY = {};
 
     public void appendAttribute(String name, Object value);

@@ -1,12 +1,10 @@
 package org.systemsbiology.remotecontrol;
 
 import com.jcraft.jsch.*;
-import org.apache.hadoop.security.*;
 import org.systemsbiology.hadoop.*;
 import org.systemsbiology.hadoopgenerated.*;
 
 import java.io.*;
-import java.security.*;
 
 /**
  * org.systemsbiology.remotecontrol.RemoteSession
@@ -197,26 +195,26 @@ public class RemoteSession implements UserInfo {
         return pHc.runJob(job);
     }
 
-
-    private static boolean runShakesphear(final IHadoopController pHc) {
-        //   pHc.guaranteeFiles(new File("E:/Code/config"), "/user/howdah/config");
-        //   pHc.guaranteeFiles(new File("E:/Code/YeastReports"), "/user/howdah/YeastReports");
-        //   pHc.guaranteeFilesOnHDFS(new File("E:/Code/YeastData"), "/user/howdah/small_yeast", "/user/howdah/small_yeast");
-        //      pHc.guaranteeFilesOnHDFS(new File("E:/Code/YeastReports"), "/user/howdah/config", "/user/howdah/YeastReports");
-
-
-        IHadoopJob job = HadoopJob.buildJob(org.systemsbiology.couldera.training.index.LineIndexer.class,
-                "/user/training/input",  // data on hdfs
-                RemoteUtilities.getDefaultPath() + "/jobs",          // jar location
-                "/user/training/shak"               // output location - will have outputN added
-
-
-        );
-
-
-        return pHc.runJob(job);
-    }
-
+//
+//    private static boolean runShakesphear(final IHadoopController pHc) {
+//        //   pHc.guaranteeFiles(new File("E:/Code/config"), "/user/howdah/config");
+//        //   pHc.guaranteeFiles(new File("E:/Code/YeastReports"), "/user/howdah/YeastReports");
+//        //   pHc.guaranteeFilesOnHDFS(new File("E:/Code/YeastData"), "/user/howdah/small_yeast", "/user/howdah/small_yeast");
+//        //      pHc.guaranteeFilesOnHDFS(new File("E:/Code/YeastReports"), "/user/howdah/config", "/user/howdah/YeastReports");
+//
+//
+//        IHadoopJob job = HadoopJob.buildJob(org.systemsbiology.couldera.training.index.LineIndexer.class,
+//                "/user/training/input",  // data on hdfs
+//                RemoteUtilities.getDefaultPath() + "/jobs",          // jar location
+//                "/user/training/shak"               // output location - will have outputN added
+//
+//
+//        );
+//
+//
+//        return pHc.runJob(job);
+//    }
+//
 
     /*
   private static void runYeastHowdahProcess(IHadoopController launcher) {

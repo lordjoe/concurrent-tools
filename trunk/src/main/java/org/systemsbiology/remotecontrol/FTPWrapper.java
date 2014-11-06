@@ -253,7 +253,7 @@ public class FTPWrapper implements IFileSystem {
 
             }
         }
-        throw new IllegalStateException("neven get here");
+        throw new IllegalStateException("never get here");
     }
 
 
@@ -368,6 +368,35 @@ public class FTPWrapper implements IFileSystem {
             throw new RuntimeException(e);
 
         }
+    }
+
+    /**
+     * open a stream from a file
+     *
+     * @param hdfsPath !null remote path to an existing file
+     * @return input stream
+     */
+    @Override
+    public InputStream openPath(final String hdfsPath) {
+        ChannelSftp channel = getFtpChannel();
+        try {
+            InputStream is = channel.get(hdfsPath);
+            return is;
+        } catch (SftpException e) {
+            throw new RuntimeException(e);
+
+        }
+     }
+
+    /**
+     * open a stream to a file
+     *
+     * @param hdfsPath !null remote path to an existing file
+     * @return input stream
+     */
+    @Override
+    public OutputStream openPathForWrite(final String hdfsPath) {
+        return put(hdfsPath);
     }
 
     public boolean mkdir(String path) {

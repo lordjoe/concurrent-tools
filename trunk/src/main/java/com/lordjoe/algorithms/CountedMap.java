@@ -1,5 +1,6 @@
 package com.lordjoe.algorithms;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -7,7 +8,7 @@ import java.util.*;
  *
  * @param <T>
  */
-public class CountedMap<T> {
+public class CountedMap<T> implements Serializable {
     private Map<T, Integer> items = new HashMap<T, Integer>();
     private int total;
 
