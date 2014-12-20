@@ -10,6 +10,7 @@
     <packaging>jar</packaging>
     <name>Concurrent Tools</name>
 
+
     <developers>
         <developer>
             <id>slewis</id>
@@ -43,15 +44,16 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.9</version>
+            <version>1.2.12</version>
         </dependency>
-          <dependency>
-        	<groupId>org.eclipse.jetty</groupId>
-        	<artifactId>jetty-server</artifactId>
-        	<version>8.1.14.v20131031</version>
+        <!--
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>8.1.14.v20131031</version>
         </dependency>
+       -->
 
-	 
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
@@ -60,28 +62,38 @@
 
         <!-- needed for annotations SLewis -->
         <dependency>
-             <groupId>com.google.code.findbugs</groupId>
-             <artifactId>jsr305</artifactId>
-             <version>2.0.1</version>
-         </dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+           <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
         <!--
-                <dependency>
-                  <groupId>org.apache.hadoop</groupId>
-                  <artifactId>hadoop-common</artifactId>
-                  <version>2.2.0</version>
-              </dependency>
-              <dependency>
-                  <groupId>org.apache.hadoop</groupId>
-                  <artifactId>hadoop-client</artifactId>
-                  <version>2.2.0</version>
-              </dependency>
-    -->
-          <dependency>
+         <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
             <version>0.20.2</version>
-             </dependency>
-        <!--
+        </dependency>
      <dependency>
               <groupId>org.apache.hadoop</groupId>
               <artifactId>hadoop-core</artifactId>
@@ -90,23 +102,23 @@
     -->
 
         <dependency>
-        	<groupId>org.codehaus.janino</groupId>
-        	<artifactId>janino</artifactId>
-        	<version>2.5.16</version>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>2.5.16</version>
             <exclusions>
-               <exclusion>
-                   <groupId>org.slf4j</groupId>
-                   <artifactId>slf4j-nop</artifactId>
-               </exclusion>
-               <exclusion>
-                   <groupId>org.slf4j</groupId>
-                   <artifactId>slf4j-api</artifactId>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-nop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>jcl-over-slf4j</artifactId>
                 </exclusion>
-           </exclusions>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -153,6 +165,7 @@
 
     </dependencies>
 
+
     <build>
         <resources>
             <resource>
@@ -160,6 +173,8 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+
+
         <plugins>
 
             <plugin>
@@ -204,6 +219,40 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Maven Shade Plugin -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                     <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                   <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.mkyong.core.utils.App</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                          </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+    -->
         </plugins>
     </build>
 

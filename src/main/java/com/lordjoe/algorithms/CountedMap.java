@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * map items to counts of their ocurrances
+ * map items to counts of their occurrences
  *
  * @param <T>
  */

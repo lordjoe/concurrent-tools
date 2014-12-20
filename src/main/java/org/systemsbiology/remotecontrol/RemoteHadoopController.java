@@ -2,7 +2,7 @@ package org.systemsbiology.remotecontrol;
 
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.fs.*;
-import org.apache.hadoop.hdfs.*;
+import org.apache.hadoop.hdfs.web.*;
 import org.apache.hadoop.util.*;
 import org.systemsbiology.common.*;
 import org.systemsbiology.hadoop.*;
